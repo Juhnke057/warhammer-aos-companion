@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prototype 4 — War Room Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Special Elite', cursive;
+    background: #b8986a;
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    /* Aged map texture */
+    background-image:
+      radial-gradient(ellipse at 20% 30%, rgba(180,140,80,0.4) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(140,100,50,0.3) 0%, transparent 50%),
+      repeating-linear-gradient(45deg, transparent 0px, transparent 18px, rgba(0,0,0,0.015) 18px, rgba(0,0,0,0.015) 19px),
+      repeating-linear-gradient(-45deg, transparent 0px, transparent 18px, rgba(0,0,0,0.01) 18px, rgba(0,0,0,0.01) 19px);
+    background-color: #c4a870;
+  }
+
+  /* hex grid overlay */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 0 L56 16 L56 50 L28 66 L0 50 L0 16 Z' fill='none' stroke='%23000' strokeWidth='1'/%3E%3Cpath d='M28 66 L56 82 L56 116 L28 132 L0 116 L0 82 Z' fill='none' stroke='%23000' strokeWidth='1'/%3E%3C/svg%3E");
+  }
+
+  .topbar {
+    height: 50px; position: relative; z-index: 1;
+    background: #2a1a08;
+    border-bottom: 3px solid #8b6000;
+    display: flex; align-items: center; padding: 0 16px; gap: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+  }
+  .topbar-title {
+    font-family: 'Cinzel', serif; font-size: 17px; font-weight: 900;
+    color: #d4a017; text-transform: uppercase; letter-spacing: 0.2em;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.8);
+  }
+  .compass {
+    margin-left: auto; font-size: 28px; line-height: 1;
+    color: #d4a017; opacity: 0.8;
+  }
+  .round-stamp {
+    background: #8b1a1a; color: #f5e8c0;
+    font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700;
+    padding: 4px 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    transform: rotate(-2deg);
+    border: 2px solid #6b0f0f;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+  }
+
+  .main { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 1; }
+
+  /* ── Player panel ── */
+  .player-panel {
+    flex: 1; display: flex; flex-direction: column;
+    border-right: 2px solid rgba(0,0,0,0.2);
+  }
+  .panel-header {
+    padding: 10px 14px;
+    background: var(--header-bg);
+    border-bottom: 2px solid rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative;
+  }
+  .player-info .player-id { font-size: 9px; color: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.2em; }
+  .player-name { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 900; color: #1a0f05; text-transform: uppercase; letter-spacing: 0.08em; }
+  .player-faction { font-size: 11px; color: rgba(0,0,0,0.5); font-style: italic; }
+
+  .vp-wax {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--seal-color);
+    width: 54px; height: 54px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+    position: relative; flex-shrink: 0;
+    border: 3px solid rgba(0,0,0,0.2);
+  }
+  .vp-wax-num { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 1px 1px 0 rgba(0,0,0,0.4); }
+  .vp-wax-lbl { font-size: 8px; color: rgba(255,255,255,0.7); letter-spacing: 0.2em; text-transform: uppercase; }
+
+  .section-banner {
+    padding: 5px 14px;
+    background: rgba(0,0,0,0.12);
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(0,0,0,0.45);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-banner::before, .section-banner::after { content: '—'; opacity: 0.4; }
+
+  .units { flex: 1; overflow-y: auto; }
+  .unit-row {
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    background: rgba(255,255,255,0.15);
+    display: flex; align-items: flex-start; gap: 10px;
+    position: relative;
+  }
+  .unit-row:nth-child(odd) { background: rgba(0,0,0,0.05); }
+  .unit-row.hero { border-left: 3px solid var(--seal-color); }
+  .unit-row.destroyed { opacity: 0.35; }
+
+  .unit-marker {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    background: var(--seal-color);
+    border: 2px solid rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-size: 13px; font-weight: 900;
+    color: rgba(255,255,255,0.9); text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  }
+  .unit-info { flex: 1; min-width: 0; }
+  .unit-name { font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; color: #1a0f05; text-transform: uppercase; letter-spacing: 0.05em; }
+  .unit-stats { font-size: 10px; color: rgba(0,0,0,0.45); margin-top: 2px; display: flex; gap: 10px; }
+  .unit-stats span b { color: rgba(0,0,0,0.65); }
+
+  .casualty-track { display: flex; gap: 2px; margin-top: 5px; }
+  .c-mark {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.4);
+  }
+  .c-mark.hit {
+    background: var(--seal-color);
+    border-color: rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .c-mark.hit::after {
+    content: '✕'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: rgba(255,255,255,0.8);
+  }
+
+  .unit-btns { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+  .map-btn {
+    padding: 4px 8px; font-family: 'Special Elite', cursive;
+    font-size: 10px; background: rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.2);
+    color: rgba(0,0,0,0.55); cursor: pointer;
+  }
+  .status-stamp {
+    font-size: 9px; padding: 2px 6px;
+    border: 1px solid; font-style: italic;
+    transform: rotate(-1deg); display: inline-block; margin-top: 3px;
+  }
+
+  /* Center strip */
+  .center-strip {
+    width: 140px; flex-shrink: 0;
+    background: rgba(0,0,0,0.55);
+    border-left: 2px solid rgba(0,0,0,0.3);
+    border-right: 2px solid rgba(0,0,0,0.3);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 10px 8px; gap: 8px;
+  }
+  .round-card {
+    width: 100%; padding: 12px 8px; text-align: center;
+    background: #2a1a08; border: 2px solid #8b6000;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .round-card::before {
+    content: ''; position: absolute; inset: 3px;
+    border: 1px solid rgba(212,160,23,0.2); pointer-events: none;
+  }
+  .rc-lbl { font-size: 8px; color: #8b6000; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 4px; }
+  .rc-num { font-family: 'Cinzel', serif; font-size: 50px; font-weight: 900; color: #d4a017; line-height: 1; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); }
+  .rc-of { font-size: 9px; color: #6b4a14; }
+
+  .phase-card {
+    width: 100%; padding: 10px 8px; text-align: center;
+    background: #2a1a08; border: 1px solid; cursor: pointer;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+    transition: transform 0.1s;
+  }
+  .phase-card:active { transform: translateY(2px); box-shadow: 0 0 0 rgba(0,0,0,0.5); }
+  .pc-phase { font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+  .pc-sub { font-size: 9px; color: rgba(255,255,255,0.25); margin-top: 3px; }
+
+  .nav { display: flex; gap: 4px; width: 100%; }
+  .nav-b { flex: 1; height: 36px; border: 1px solid; background: #1a0f05; cursor: pointer; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; box-shadow: 2px 2px 0 rgba(0,0,0,0.4); transition: transform 0.1s; }
+  .nav-b:active { transform: translateY(1px); box-shadow: 0 0 0; }
+
+  .score-card { width: 100%; background: #2a1a08; border: 1px solid #8b6000; box-shadow: 2px 2px 0 rgba(0,0,0,0.4); }
+  .score-hdr { padding: 4px 8px; font-size: 8px; color: #8b6000; letter-spacing: 0.2em; text-transform: uppercase; border-bottom: 1px solid rgba(139,96,0,0.3); text-align: center; }
+  .score-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .score-row:last-child { border: none; }
+  .score-pn { font-size: 9px; color: rgba(255,255,255,0.3); }
+  .score-v { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 900; }
+
+  .c-btn { width: 100%; padding: 7px; font-family: 'Special Elite', cursive; font-size: 10px; background: #1a0f05; border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.25); cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; box-shadow: 1px 1px 0 rgba(0,0,0,0.4); }
+  .spacer { flex: 1; }
+  .divider { width: 80%; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,160,23,0.3), transparent); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-title">⚔ AoS Spearhead</div>
+    <div class="round-stamp">Battle Round II</div>
+    <div class="compass">✦</div>
+  </div>
+  <div class="main">
+
+    <!-- Player 1 FEC -->
+    <div class="player-panel" style="--header-bg:rgba(180,80,60,0.12);--seal-color:#8b1a1a">
+      <div class="panel-header">
+        <div class="player-info">
+          <div class="player-id">Player 1</div>
+          <div class="player-name">Player 1</div>
+          <div class="player-faction">Flesh-eater Courts</div>
+        </div>
+        <div class="vp-wax"><div class="vp-wax-num">7</div><div class="vp-wax-lbl">VP</div></div>
+      </div>
+      <div class="section-banner">General's Regiment</div>
+      <div class="units">
+        <div class="unit-row hero">
+          <div class="unit-marker">G</div>
+          <div class="unit-info">
+            <div class="unit-name">Abhorrant Ghoul King</div>
+            <div class="unit-stats"><span>Mv <b>6"</b></span><span>Hp <b>7</b></span><span>Sv <b>4+</b></span></div>
+            <div class="casualty-track">
+              <div class="c-mark hit"></div><div class="c-mark hit"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+              <div class="c-mark"></div><div class="c-mark"></div>
+            </div>
+            <div><span class="status-stamp" style="color:#8b008b;border-color:rgba(139,0,139,0.4)">Deranged</span></div>
+          </div>
+          <div class="unit-btns">
+            <div class="map-btn">Wound +</div>
+            <div class="map-btn">Heal −</div>
+          </div>
+        </div>
+        <div class="unit-row">
+          <div class="unit-marker" style="font-size:10px">CG</div>
+          <div class="unit-info">
+            <div class="unit-name">Cryptguard</div>
+            <div class="unit-stats"><span>Mv <b>6"</b></span><span>HP <b>1×10</b></span></div>
+            <div class="casualty-track">
+              <div class="c-mark hit"></div><div class="c-mark hit"></div><div class="c-mark hit"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+            </div>
+          </div>
+          <div class="unit-btns"><div class="map-btn">W+</div><div class="map-btn">H−</div></div>
+        </div>
+        <div class="unit-row">
+          <div class="unit-marker" style="font-size:10px">MK</div>
+          <div class="unit-info">
+            <div class="unit-name">Morbheg Knights</div>
+            <div class="unit-stats"><span>Mv <b>10"</b></span><span>HP <b>3×3</b></span></div>
+            <div class="casualty-track">
+              <div class="c-mark hit"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+              <div class="c-mark"></div><div class="c-mark"></div>
+            </div>
+          </div>
+          <div class="unit-btns"><div class="map-btn">W+</div><div class="map-btn">H−</div></div>
+        </div>
+        <div class="unit-row destroyed">
+          <div class="unit-marker" style="background:#444;font-size:10px">VC</div>
+          <div class="unit-info">
+            <div class="unit-name" style="text-decoration:line-through;color:rgba(0,0,0,0.3)">Varghulf Courtier</div>
+            <div class="unit-stats" style="color:#8b1a1a">Fallen in battle</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center -->
+    <div class="center-strip">
+      <div class="round-card">
+        <div class="rc-lbl">Battle Round</div>
+        <div class="rc-num">2</div>
+        <div class="rc-of">of IV</div>
+      </div>
+      <div class="divider"></div>
+      <div class="phase-card" style="border-color:#f9731660;color:#f97316">
+        <div class="pc-phase">⚔ Combat</div>
+        <div class="pc-sub">Player 1 · tap for rules</div>
+      </div>
+      <div class="nav">
+        <button class="nav-b" style="border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.2)">‹</button>
+        <button class="nav-b" style="border-color:#f9731650;color:#f97316">Next →</button>
+      </div>
+      <div class="divider"></div>
+      <div class="score-card">
+        <div class="score-hdr">Victory Points</div>
+        <div class="score-row"><span class="score-pn">Player 1</span><span class="score-v" style="color:#d4442a">7</span></div>
+        <div class="score-row"><span class="score-pn">Player 2</span><span class="score-v" style="color:#4a8a2a">5</span></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="divider"></div>
+      <button class="c-btn">Rulebooks</button>
+      <button class="c-btn" style="color:rgba(180,40,40,0.5)">End Battle</button>
+    </div>
+
+    <!-- Player 2 Skaven -->
+    <div class="player-panel" style="--header-bg:rgba(60,120,60,0.12);--seal-color:#2a5a1a;border-right:none">
+      <div class="panel-header">
+        <div class="player-info">
+          <div class="player-id">Player 2</div>
+          <div class="player-name">Player 2</div>
+          <div class="player-faction">Skaven · Gnawfeast</div>
+        </div>
+        <div class="vp-wax" style="--seal-color:#2a5a1a"><div class="vp-wax-num">5</div><div class="vp-wax-lbl">VP</div></div>
+      </div>
+      <div class="section-banner">General's Regiment</div>
+      <div class="units">
+        <div class="unit-row hero">
+          <div class="unit-marker" style="background:#2a5a1a">G</div>
+          <div class="unit-info">
+            <div class="unit-name">Clawlord on Gnaw-Beast</div>
+            <div class="unit-stats"><span>Mv <b>10"</b></span><span>Hp <b>8</b></span><span>Sv <b>4+</b></span></div>
+            <div class="casualty-track">
+              <div class="c-mark hit" style="background:#2a5a1a"></div>
+              <div class="c-mark hit" style="background:#2a5a1a"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+            </div>
+            <div><span class="status-stamp" style="color:#8b1a1a;border-color:rgba(139,26,26,0.4)">Bloodmarked!</span></div>
+          </div>
+          <div class="unit-btns"><div class="map-btn">Wound +</div><div class="map-btn">Heal −</div></div>
+        </div>
+        <div class="unit-row">
+          <div class="unit-marker" style="background:#2a5a1a;font-size:10px">CR</div>
+          <div class="unit-info">
+            <div class="unit-name">Clanrats</div>
+            <div class="unit-stats"><span>Mv <b>6"</b></span><span>HP <b>1×10</b></span></div>
+            <div class="casualty-track">
+              <div class="c-mark hit" style="background:#2a5a1a"></div>
+              <div class="c-mark hit" style="background:#2a5a1a"></div>
+              <div class="c-mark hit" style="background:#2a5a1a"></div>
+              <div class="c-mark hit" style="background:#2a5a1a"></div>
+              <div class="c-mark"></div><div class="c-mark"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+            </div>
+          </div>
+          <div class="unit-btns"><div class="map-btn">W+</div><div class="map-btn">H−</div></div>
+        </div>
+        <div class="unit-row">
+          <div class="unit-marker" style="background:#2a5a1a;font-size:10px">SV</div>
+          <div class="unit-info">
+            <div class="unit-name">Stormvermin</div>
+            <div class="unit-stats"><span>Mv <b>6"</b></span><span>HP <b>2×5</b></span><span>Sv <b>3+</b></span></div>
+            <div class="casualty-track">
+              <div class="c-mark hit" style="background:#2a5a1a"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+              <div class="c-mark"></div><div class="c-mark"></div><div class="c-mark"></div>
+            </div>
+          </div>
+          <div class="unit-btns"><div class="map-btn">W+</div><div class="map-btn">H−</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

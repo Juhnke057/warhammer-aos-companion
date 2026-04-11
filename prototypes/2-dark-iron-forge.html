@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prototype 2 — Dark Iron Forge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #050505;
+    font-family: 'Share Tech Mono', monospace;
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+    background-image: repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(255,255,255,0.008) 3px, rgba(255,255,255,0.008) 4px),
+                      repeating-linear-gradient(90deg, transparent 0px, transparent 3px, rgba(255,255,255,0.005) 3px, rgba(255,255,255,0.005) 4px);
+  }
+
+  .topbar {
+    background: #0a0a0a;
+    border-bottom: 2px solid #c0392b;
+    padding: 0 16px;
+    height: 44px; display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 2px 20px rgba(192,57,43,0.4);
+  }
+  .topbar-title {
+    font-family: 'Cinzel', serif; font-size: 16px; font-weight: 900;
+    color: #c0392b; text-transform: uppercase; letter-spacing: 0.3em;
+    text-shadow: 0 0 20px rgba(192,57,43,0.8);
+  }
+  .topbar-round {
+    margin-left: auto;
+    font-size: 11px; color: #666; letter-spacing: 0.1em;
+  }
+  .topbar-round span { color: #c0392b; font-weight: 700; font-size: 14px; }
+
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── Player panel ── */
+  .player-panel {
+    flex: 1; display: flex; flex-direction: column;
+    border-right: 1px solid #1a1a1a;
+  }
+  .panel-header {
+    padding: 10px 14px;
+    background: #0d0d0d;
+    border-bottom: 1px solid;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .panel-header::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+  .panel-header .left { display: flex; flex-direction: column; gap: 2px; }
+  .player-label { font-size: 9px; color: #444; letter-spacing: 0.2em; text-transform: uppercase; }
+  .player-name { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 900; color: #eee; letter-spacing: 0.08em; text-transform: uppercase; }
+  .player-faction { font-size: 10px; color: var(--accent); letter-spacing: 0.1em; }
+
+  .vp-area { display: flex; align-items: center; gap: 10px; }
+  .vp-btn {
+    width: 32px; height: 32px; border: 1px solid #2a2a2a; background: #111;
+    color: #666; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .vp-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .vp-display { text-align: center; }
+  .vp-num { font-family: 'Cinzel', serif; font-size: 32px; font-weight: 900; color: var(--accent); line-height: 1; text-shadow: 0 0 16px var(--accent); }
+  .vp-tag { font-size: 8px; color: #333; letter-spacing: 0.2em; }
+
+  .subheader {
+    padding: 5px 14px;
+    background: #080808;
+    border-bottom: 1px solid #1a1a1a;
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: #333;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .subheader::before { content: '//'; color: var(--accent); }
+
+  .units { flex: 1; overflow-y: auto; }
+  .unit-row {
+    padding: 9px 14px;
+    border-bottom: 1px solid #111;
+    display: flex; align-items: flex-start; gap: 10px;
+    background: #090909;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .unit-row::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: #1a1a1a;
+  }
+  .unit-row.hero::before { background: var(--accent); box-shadow: 2px 0 8px var(--accent-dim); }
+  .unit-row:nth-child(odd) { background: #0b0b0b; }
+  .unit-info { flex: 1; min-width: 0; }
+  .unit-name {
+    font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700;
+    color: #ccc; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .unit-stats {
+    font-size: 10px; color: #444; margin-top: 2px; letter-spacing: 0.05em;
+    display: flex; gap: 10px;
+  }
+  .unit-stats span { color: #555; }
+  .unit-stats span b { color: var(--accent-dim); }
+
+  .hp-track {
+    display: flex; gap: 2px; margin-top: 5px; flex-wrap: wrap; max-width: 120px;
+  }
+  .hp-seg {
+    width: 8px; height: 12px; background: var(--accent-dim);
+    opacity: 0.7;
+    clip-path: polygon(2px 0%,100% 0%,calc(100% - 2px) 100%,0% 100%);
+  }
+  .hp-seg.dead {
+    background: #1a1a1a; opacity: 0.4;
+    clip-path: polygon(2px 0%,100% 0%,calc(100% - 2px) 100%,0% 100%);
+  }
+
+  .unit-controls-col { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+  .mini-btn {
+    padding: 4px 8px; border: 1px solid #1a1a1a; background: #0d0d0d;
+    color: #555; font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .mini-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .dmg-row { display: flex; gap: 4px; }
+
+  .status-tag {
+    font-size: 9px; padding: 2px 6px; border: 1px solid; letter-spacing: 0.1em;
+    margin-top: 3px; display: inline-block;
+  }
+
+  /* Center strip */
+  .center-strip {
+    width: 130px; flex-shrink: 0;
+    background: #060606;
+    border-left: 1px solid #1a1a1a; border-right: 1px solid #1a1a1a;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 10px 8px; gap: 8px;
+  }
+  .round-display {
+    width: 100%; text-align: center; padding: 12px 0;
+    border: 1px solid #1e1e1e;
+    background: #0a0a0a;
+    position: relative; overflow: hidden;
+  }
+  .round-display::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, #c0392b, transparent);
+    box-shadow: 0 0 8px #c0392b;
+  }
+  .rd-lbl { font-size: 8px; color: #333; letter-spacing: 0.2em; margin-bottom: 4px; }
+  .rd-num { font-family: 'Cinzel', serif; font-size: 52px; font-weight: 900; line-height: 1; color: #ddd; }
+  .rd-pips { display: flex; justify-content: center; gap: 5px; margin-top: 8px; }
+  .rd-pip { width: 6px; height: 6px; background: #1a1a1a; }
+  .rd-pip.active { background: #c0392b; box-shadow: 0 0 6px #c0392b; }
+  .rd-pip.done { background: #3a1a1a; }
+
+  .phase-btn {
+    width: 100%; padding: 12px 8px; text-align: center;
+    border: 1px solid; cursor: pointer;
+    position: relative; overflow: hidden; transition: all 0.2s;
+    background: #080808;
+  }
+  .phase-icon-lbl { font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; }
+  .phase-sub { font-size: 9px; color: #333; margin-top: 3px; }
+
+  .nav { display: flex; gap: 4px; width: 100%; }
+  .nav-prev { width: 36px; height: 38px; border: 1px solid #1a1a1a; background: #0a0a0a; color: #333; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .nav-next { flex: 1; height: 38px; border: 1px solid; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; background: #0a0a0a; }
+
+  .score-panel { width: 100%; border: 1px solid #111; background: #080808; }
+  .score-hdr { font-size: 8px; color: #222; letter-spacing: 0.2em; padding: 4px 8px; border-bottom: 1px solid #111; text-transform: uppercase; }
+  .score-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; }
+  .score-n { font-size: 9px; color: #333; letter-spacing: 0.1em; }
+  .score-v { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; }
+
+  .bottom-btn { width: 100%; padding: 7px; font-family: 'Share Tech Mono'; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid #1a1a1a; background: #080808; color: #333; cursor: pointer; }
+  .end-btn { color: #3a0a0a; border-color: #2a0808; }
+  .spacer { flex: 1; }
+  .divider { width: 80%; height: 1px; background: linear-gradient(90deg, transparent, #1e1e1e, transparent); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-title">⚒ AoS Spearhead</div>
+    <div class="topbar-round">BATTLE ROUND <span>2</span> / 4</div>
+  </div>
+  <div class="main">
+
+    <!-- Player 1 — FEC -->
+    <div class="player-panel" style="--accent:#cc2222;--accent-dim:#881414">
+      <div class="panel-header" style="border-color:#1a0808">
+        <div class="left">
+          <div class="player-label">Player 1</div>
+          <div class="player-name">Player 1</div>
+          <div class="player-faction">Flesh-eater Courts</div>
+        </div>
+        <div class="vp-area">
+          <div class="vp-btn">−</div>
+          <div class="vp-display"><div class="vp-num">7</div><div class="vp-tag">VP</div></div>
+          <div class="vp-btn">+</div>
+        </div>
+      </div>
+      <div class="subheader">Regiment 1</div>
+      <div class="units">
+        <div class="unit-row hero">
+          <div class="unit-info">
+            <div class="unit-name">Abhorrant Ghoul King</div>
+            <div class="unit-stats">
+              <span>MV <b>6"</b></span><span>HP <b>7</b></span><span>SV <b>4+</b></span><span>CTRL <b>2</b></span>
+            </div>
+            <div class="hp-track">
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg dead"></div>
+              <div class="hp-seg dead"></div>
+            </div>
+            <span class="status-tag" style="color:#a020a0;border-color:#601060">DERANGED</span>
+          </div>
+          <div class="unit-controls-col">
+            <div class="dmg-row">
+              <button class="mini-btn">−</button>
+              <button class="mini-btn">+</button>
+            </div>
+            <button class="mini-btn" style="font-size:9px">STATUS</button>
+          </div>
+        </div>
+        <div class="unit-row">
+          <div class="unit-info">
+            <div class="unit-name">Cryptguard</div>
+            <div class="unit-stats"><span>MV <b>6"</b></span><span>HP <b>1×10</b></span><span>SV <b>4+</b></span></div>
+            <div class="hp-track">
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg dead"></div>
+              <div class="hp-seg dead"></div><div class="hp-seg dead"></div>
+            </div>
+          </div>
+          <div class="unit-controls-col">
+            <div class="dmg-row"><button class="mini-btn">−</button><button class="mini-btn">+</button></div>
+            <button class="mini-btn" style="font-size:9px">STATUS</button>
+          </div>
+        </div>
+        <div class="unit-row">
+          <div class="unit-info">
+            <div class="unit-name">Morbheg Knights</div>
+            <div class="unit-stats"><span>MV <b>10"</b></span><span>HP <b>3×3</b></span><span>SV <b>4+</b></span></div>
+            <div class="hp-track">
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg dead"></div>
+            </div>
+          </div>
+          <div class="unit-controls-col">
+            <div class="dmg-row"><button class="mini-btn">−</button><button class="mini-btn">+</button></div>
+          </div>
+        </div>
+        <div class="unit-row" style="opacity:0.3">
+          <div class="unit-info">
+            <div class="unit-name" style="text-decoration:line-through;color:#333">Varghulf Courtier</div>
+            <div class="unit-stats"><span style="color:#c0392b">// DESTROYED</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center -->
+    <div class="center-strip">
+      <div class="round-display">
+        <div class="rd-lbl">// ROUND</div>
+        <div class="rd-num">2</div>
+        <div class="rd-pips">
+          <div class="rd-pip done"></div>
+          <div class="rd-pip active"></div>
+          <div class="rd-pip"></div>
+          <div class="rd-pip"></div>
+        </div>
+      </div>
+      <div class="phase-btn" style="border-color:#f9731650;color:#f97316">
+        <div class="phase-icon-lbl">⚔ Combat</div>
+        <div class="phase-sub">Player 1 · tap for rules</div>
+      </div>
+      <div class="nav">
+        <button class="nav-prev">‹</button>
+        <button class="nav-next" style="border-color:#f9731660;color:#f97316">NEXT →</button>
+      </div>
+      <div class="divider"></div>
+      <div class="score-panel">
+        <div class="score-hdr">// Score</div>
+        <div class="score-row" style="border-bottom:1px solid #0e0e0e">
+          <span class="score-n">P1</span>
+          <span class="score-v" style="color:#cc2222;text-shadow:0 0 8px #cc222240">7</span>
+        </div>
+        <div class="score-row">
+          <span class="score-n">P2</span>
+          <span class="score-v" style="color:#228822;text-shadow:0 0 8px #22882240">5</span>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="divider"></div>
+      <button class="bottom-btn">RULES</button>
+      <button class="bottom-btn end-btn">END GAME</button>
+    </div>
+
+    <!-- Player 2 — Skaven -->
+    <div class="player-panel" style="--accent:#22882a;--accent-dim:#145a1c;border-right:none">
+      <div class="panel-header" style="border-color:#081a08">
+        <div class="left">
+          <div class="player-label">Player 2</div>
+          <div class="player-name">Player 2</div>
+          <div class="player-faction">Skaven · Gnawfeast</div>
+        </div>
+        <div class="vp-area">
+          <div class="vp-btn">−</div>
+          <div class="vp-display"><div class="vp-num">5</div><div class="vp-tag">VP</div></div>
+          <div class="vp-btn">+</div>
+        </div>
+      </div>
+      <div class="subheader">Regiment 1</div>
+      <div class="units">
+        <div class="unit-row hero">
+          <div class="unit-info">
+            <div class="unit-name">Clawlord on Gnaw-Beast</div>
+            <div class="unit-stats"><span>MV <b>10"</b></span><span>HP <b>8</b></span><span>SV <b>4+</b></span></div>
+            <div class="hp-track">
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg dead"></div><div class="hp-seg dead"></div>
+            </div>
+            <span class="status-tag" style="color:#ef4444;border-color:#8b1a1a">BLOODMARKED</span>
+          </div>
+          <div class="unit-controls-col">
+            <div class="dmg-row"><button class="mini-btn">−</button><button class="mini-btn">+</button></div>
+            <button class="mini-btn" style="font-size:9px">STATUS</button>
+          </div>
+        </div>
+        <div class="unit-row">
+          <div class="unit-info">
+            <div class="unit-name">Clanrats</div>
+            <div class="unit-stats"><span>MV <b>6"</b></span><span>HP <b>1×10</b></span><span>SV <b>5+</b></span></div>
+            <div class="hp-track">
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg dead"></div><div class="hp-seg dead"></div>
+              <div class="hp-seg dead"></div><div class="hp-seg dead"></div>
+            </div>
+          </div>
+          <div class="unit-controls-col">
+            <div class="dmg-row"><button class="mini-btn">−</button><button class="mini-btn">+</button></div>
+          </div>
+        </div>
+        <div class="unit-row">
+          <div class="unit-info">
+            <div class="unit-name">Stormvermin</div>
+            <div class="unit-stats"><span>MV <b>6"</b></span><span>HP <b>2×5</b></span><span>SV <b>3+</b></span></div>
+            <div class="hp-track">
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg"></div>
+              <div class="hp-seg"></div><div class="hp-seg dead"></div>
+            </div>
+          </div>
+          <div class="unit-controls-col">
+            <div class="dmg-row"><button class="mini-btn">−</button><button class="mini-btn">+</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

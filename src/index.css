@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=IM+Fell+English:ital@0;1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'IM Fell English', Georgia, serif;
+  overscroll-behavior: none;
+}
+
+/* ── Scrollable panels ─────────────────────────────────────────────────────── */
+
+.panel-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.panel-scroll::-webkit-scrollbar { width: 3px; }
+.panel-scroll::-webkit-scrollbar-track { background: transparent; }
+.panel-scroll::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: rgba(0,0,0,0.15);
+}
+
+/* ── Parchment texture overlay ─────────────────────────────────────────────── */
+
+.parchment-texture {
+  background-image:
+    radial-gradient(ellipse at 15% 20%, rgba(200,160,80,0.18), transparent 45%),
+    radial-gradient(ellipse at 85% 75%, rgba(160,120,50,0.14), transparent 45%);
+}
+
+/* ── AOS decorative utilities ──────────────────────────────────────────────── */
+
+/* Subtle crosshatch texture for dark panels */
+.panel-texture {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px, transparent 23px,
+      rgba(255,255,255,0.018) 23px, rgba(255,255,255,0.018) 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 23px,
+      rgba(255,255,255,0.01) 23px, rgba(255,255,255,0.01) 24px
+    );
+}
+
+/* Horizontal rule that fades at both ends */
+.aos-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, currentColor 25%, currentColor 75%, transparent 100%);
+  opacity: 0.18;
+}
+
+/* Glowing accent line */
+.aos-accent-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, currentColor 30%, currentColor 70%, transparent 100%);
+}
+
+/* ── Gothic frame — double-border ──────────────────────────────────────────── */
+
+.gothic-frame {
+  position: relative;
+}
+.gothic-frame::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid currentColor;
+  opacity: 0.15;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ── Parchment card ─────────────────────────────────────────────────────────── */
+
+.parchment-card {
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  transition: box-shadow 0.15s ease;
+}
+
+.parchment-card.hero-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+}
+
+/* ── Arch section header ────────────────────────────────────────────────────── */
+
+.arch-header {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.arch-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.2;
+  border-radius: 2px;
+}
+
+/* ── Stat gem — bordered cell for stat values ──────────────────────────────── */
+
+.stat-gem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid currentColor;
+  padding: 3px 5px;
+  min-width: 34px;
+  position: relative;
+  clip-path: polygon(4px 0%, calc(100% - 4px) 0%, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0% calc(100% - 4px), 0% 4px);
+}
+
+/* ── HP boxes — parchment wound tracker ────────────────────────────────────── */
+
+.hp-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.55);
+  flex-shrink: 0;
+}
+.hp-box.damaged {
+  background: var(--hp-dmg-color, rgba(176,24,24,0.55));
+  border-color: var(--hp-dmg-border, rgba(120,20,20,0.4));
+}
+
+/* ── Roster divider ─────────────────────────────────────────────────────────── */
+
+.roster-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.08) 20%, rgba(0,0,0,0.08) 80%, transparent 100%);
+}
+
+/* Section header — gothic uppercase with flanking lines */
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.section-heading::before,
+.section-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.25;
+}
+
+/* ── Phase button — clipped angular corners ────────────────────────────────── */
+
+.phase-btn {
+  border-radius: 12px;
+}
+
+/* ── Round badge ───────────────────────────────────────────────────────────── */
+
+.round-badge {
+  border-radius: 14px;
+}
+
+/* ── Parchment pill / badge ─────────────────────────────────────────────────── */
+
+.parchment-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 2px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+
+/* ── Status pill ────────────────────────────────────────────────────────────── */
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-style: italic;
+}
+
+/* ── Unit active glow ─────────────────────────────────────────────────────── */
+
+.unit-active-glow {
+  box-shadow: 0 0 0 1px var(--faction-primary, #C9A84C),
+              0 0 12px var(--faction-glow, rgba(201,168,76,0.25));
+}
+
+/* ── Animations ────────────────────────────────────────────────────────────── */
+
+@keyframes damage-flash {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+.damage-flash { animation: damage-flash 0.3s ease; }
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px currentColor; }
+  50% { opacity: 0.7; box-shadow: 0 0 18px currentColor; }
+}
+.glow-pulse { animation: glow-pulse 2.2s ease-in-out infinite; }
+
+@keyframes slide-in-up {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+.slide-in-up { animation: slide-in-up 0.2s ease; }
+
+/* ── Misc ──────────────────────────────────────────────────────────────────── */
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.theme-transition {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}

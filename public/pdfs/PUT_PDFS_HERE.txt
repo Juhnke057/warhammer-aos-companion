@@ -1,0 +1,19 @@
+Place your PDF files in this folder with EXACTLY these filenames:
+
+RULEBOOKS
+---------
+core-rules.pdf              → AoS Core Rules & Spearhead Rules booklet
+
+FACTION RULES
+-------------
+stormcast-spearhead.pdf     → Stormcast Eternals Spearhead rules
+skaven-spearhead.pdf        → Skaven Spearhead rules
+fec-spearhead.pdf           → Flesh-eater Courts Spearhead rules
+
+CARDS & REFERENCE
+-----------------
+spearhead-reference.pdf     → Spearhead quick reference card
+fire-jade-deck.pdf          → Fire and Jade deck (twist + battle tactic cards)
+
+These filenames are used by the app to open the correct PDF when
+you tap "Open Rulebook" from within the app.

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AOS Spearhead</string>
+    <string name="title_activity_main">AOS Spearhead</string>
+    <string name="package_name">com.warhammer.aosspearhead</string>
+    <string name="custom_url_scheme">com.warhammer.aosspearhead</string>
+</resources>

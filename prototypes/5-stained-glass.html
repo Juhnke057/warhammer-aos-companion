@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prototype 5 — Stained Glass Cathedral</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d0800;
+    font-family: 'Cinzel', serif;
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  /* Lead-line grid overlay — simulates stained glass leading */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 10;
+    background-image:
+      linear-gradient(0deg, rgba(0,0,0,0.6) 0px, rgba(0,0,0,0.6) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(0,0,0,0.6) 0px, rgba(0,0,0,0.6) 2px, transparent 2px);
+    background-size: 100% 60px, 100px 100%;
+    opacity: 0.25;
+  }
+
+  .topbar {
+    height: 52px; background: #0d0800;
+    border-bottom: 3px solid #1a0d00;
+    display: flex; align-items: center; padding: 0;
+    position: relative; z-index: 2; flex-shrink: 0;
+    overflow: hidden;
+  }
+  .topbar-inner {
+    display: flex; align-items: center; width: 100%; height: 100%; padding: 0 16px;
+    background: linear-gradient(90deg,
+      rgba(180,20,20,0.15) 0%,
+      rgba(180,140,20,0.1) 30%,
+      rgba(20,100,180,0.15) 70%,
+      rgba(20,140,20,0.1) 100%
+    );
+  }
+  .topbar-title {
+    font-size: 18px; font-weight: 900; letter-spacing: 0.25em; text-transform: uppercase;
+    background: linear-gradient(90deg, #ff6060, #ffd700, #60b0ff, #60d060);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(255,220,100,0.4));
+  }
+  .round-jewel {
+    margin-left: auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: radial-gradient(circle at 35% 30%, #ffe080, #d4a000 60%, #8b6000);
+    position: relative; box-shadow: 0 0 20px rgba(212,160,0,0.5);
+  }
+  .round-jewel span { font-size: 20px; font-weight: 900; color: #fff; text-shadow: 0 1px 0 rgba(0,0,0,0.5); }
+
+  .main { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 1; }
+
+  /* ── Player panel ── */
+  .player-panel {
+    flex: 1; display: flex; flex-direction: column;
+    border-right: 3px solid #0d0800;
+    position: relative;
+  }
+  .panel-bg {
+    position: absolute; inset: 0; opacity: 0.12;
+    background: var(--panel-bg);
+    pointer-events: none;
+  }
+
+  .panel-header {
+    padding: 0; height: 60px; position: relative; flex-shrink: 0;
+    overflow: hidden;
+    border-bottom: 3px solid #0d0800;
+    display: flex;
+  }
+  /* Each header is a stained glass panel — bold color fill */
+  .header-color-block {
+    flex: 1; display: flex; align-items: center; padding: 0 14px; gap: 10px;
+    background: var(--header-color);
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%);
+  }
+  .header-info { flex: 1; min-width: 0; }
+  .player-name { font-size: 15px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.1em; text-shadow: 1px 1px 0 rgba(0,0,0,0.5); }
+  .player-faction { font-size: 10px; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; }
+  .vp-panel {
+    background: rgba(0,0,0,0.4); min-width: 72px; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-left: 2px solid rgba(0,0,0,0.4);
+  }
+  .vp-num { font-size: 32px; font-weight: 900; color: var(--vp-color); line-height: 1; text-shadow: 0 0 12px var(--vp-color); }
+  .vp-tag { font-size: 8px; color: rgba(255,255,255,0.4); letter-spacing: 0.2em; }
+  .vp-btns { display: flex; gap: 6px; margin-top: 4px; }
+  .vp-b { width: 22px; height: 22px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+  .regiment-label {
+    padding: 6px 14px;
+    background: rgba(0,0,0,0.5); border-bottom: 2px solid #0d0800;
+    font-size: 8px; text-transform: uppercase; letter-spacing: 0.3em;
+    color: var(--faction-muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .regiment-label::before, .regiment-label::after { content: ''; flex: 1; height: 1px; background: var(--faction-muted); opacity: 0.3; }
+
+  .units { flex: 1; overflow-y: auto; }
+  .unit-pane {
+    display: flex; min-height: 72px;
+    border-bottom: 3px solid #0d0800;
+    position: relative; overflow: hidden;
+  }
+  .unit-pane.hero { min-height: 82px; }
+  /* Color accent bar on left — like a stained glass border lead */
+  .unit-pane::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 5px; background: var(--faction-color);
+    box-shadow: 2px 0 8px var(--faction-glow);
+  }
+  .unit-pane-bg {
+    position: absolute; inset: 0;
+    background: var(--pane-bg);
+    opacity: 0.08;
+  }
+  .unit-pane-content { position: relative; z-index: 1; flex: 1; padding: 8px 10px 8px 16px; display: flex; align-items: flex-start; gap: 8px; }
+  .unit-info { flex: 1; min-width: 0; }
+  .unit-name {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    color: rgba(255,255,255,0.9); letter-spacing: 0.08em;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hero-crown { color: var(--faction-color); font-size: 12px; }
+  .unit-stats-row { display: flex; gap: 8px; margin-top: 4px; }
+  .stat-box {
+    display: flex; flex-direction: column; align-items: center;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
+    padding: 2px 5px; min-width: 28px;
+  }
+  .stat-v { font-size: 13px; font-weight: 900; color: var(--faction-color); line-height: 1; }
+  .stat-l { font-size: 7px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 1px; }
+
+  .hp-row { display: flex; gap: 2px; margin-top: 6px; flex-wrap: wrap; max-width: 140px; }
+  .hp-shard {
+    width: 12px; height: 16px;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0% 75%, 0% 25%);
+    background: var(--faction-color);
+    opacity: 0.85; transition: all 0.15s;
+  }
+  .hp-shard.broken {
+    background: rgba(255,255,255,0.06);
+    opacity: 0.4;
+  }
+
+  .status-shard {
+    font-size: 9px; padding: 2px 7px; margin-top: 4px; display: inline-block;
+    background: rgba(0,0,0,0.4); border: 1px solid;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  .unit-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 4px; padding: 8px; }
+  .dmg-col { display: flex; flex-direction: column; gap: 3px; }
+  .dmg-btn {
+    width: 36px; height: 36px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700;
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    clip-path: polygon(6px 0%,calc(100% - 6px) 0%,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0% calc(100% - 6px),0% 6px);
+  }
+  .destroy-btn { font-size: 14px; width: 36px; height: 28px; clip-path: none; }
+
+  /* Center strip */
+  .center-strip {
+    width: 130px; flex-shrink: 0;
+    background: #080500;
+    border-left: 3px solid #0d0800; border-right: 3px solid #0d0800;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 10px 7px; gap: 7px; overflow: hidden;
+  }
+  .round-panel {
+    width: 100%; padding: 12px 0; text-align: center;
+    background: linear-gradient(160deg, rgba(212,160,0,0.08) 0%, rgba(212,160,0,0.03) 100%);
+    border-top: 3px solid #d4a000; border-bottom: 1px solid rgba(212,160,0,0.2);
+    position: relative;
+  }
+  .rp-lbl { font-size: 8px; color: rgba(212,160,0,0.5); letter-spacing: 0.25em; text-transform: uppercase; }
+  .rp-num { font-size: 52px; font-weight: 900; color: #d4a000; line-height: 1; text-shadow: 0 0 20px rgba(212,160,0,0.4); }
+  .rp-pips { display: flex; justify-content: center; gap: 4px; margin-top: 6px; }
+  .pip {
+    width: 10px; height: 10px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: rgba(212,160,0,0.15);
+  }
+  .pip.active { background: #d4a000; box-shadow: 0 0 6px rgba(212,160,0,0.6); }
+  .pip.done { background: rgba(212,160,0,0.35); }
+
+  .phase-panel {
+    width: 100%; padding: 10px 8px; text-align: center;
+    border: 2px solid; cursor: pointer; background: rgba(0,0,0,0.3);
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .phase-panel::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: currentColor; opacity: 0.5;
+  }
+  .pp-name { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; }
+  .pp-turn { font-size: 9px; color: rgba(255,255,255,0.25); margin-top: 3px; }
+
+  .nav { display: flex; gap: 3px; width: 100%; }
+  .nav-btn {
+    flex: 1; height: 38px; border: 1px solid; cursor: pointer;
+    font-size: 11px; font-weight: 900; letter-spacing: 0.08em;
+    background: rgba(0,0,0,0.4); transition: all 0.15s;
+    clip-path: polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
+  }
+
+  .score-pane { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); }
+  .sp-hdr { font-size: 8px; color: rgba(255,255,255,0.2); letter-spacing: 0.25em; padding: 5px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .sp-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; }
+  .sp-n { font-size: 9px; color: rgba(255,255,255,0.25); }
+  .sp-v { font-size: 22px; font-weight: 900; }
+
+  .c-btn { width: 100%; padding: 8px; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.3); color: rgba(255,255,255,0.2); cursor: pointer; }
+  .spacer { flex: 1; }
+  .divider { width: 80%; height: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-title">AoS Spearhead Companion</div>
+      <div class="round-jewel"><span>2</span></div>
+    </div>
+  </div>
+  <div class="main">
+
+    <!-- Player 1 FEC — deep crimson glass -->
+    <div class="player-panel" style="--faction-color:#cc2222;--faction-glow:rgba(200,20,20,0.4);--faction-muted:#661111;--pane-bg:rgba(180,20,20,1)">
+      <div class="panel-bg" style="background:radial-gradient(ellipse at 20% 40%, rgba(180,20,20,0.15) 0%, transparent 60%)"></div>
+      <div class="panel-header">
+        <div class="header-color-block" style="--header-color:linear-gradient(135deg, #8b0000 0%, #5a0000 100%)">
+          <div class="header-info">
+            <div class="player-name">Player 1</div>
+            <div class="player-faction">Flesh-eater Courts</div>
+          </div>
+        </div>
+        <div class="vp-panel" style="--vp-color:#ff4444">
+          <div class="vp-num">7</div>
+          <div class="vp-tag">VP</div>
+          <div class="vp-btns"><div class="vp-b">−</div><div class="vp-b">+</div></div>
+        </div>
+      </div>
+      <div class="regiment-label" style="--faction-muted:#661111">General's Regiment</div>
+      <div class="units">
+        <div class="unit-pane hero">
+          <div class="unit-pane-bg"></div>
+          <div class="unit-pane-content">
+            <div class="unit-info">
+              <div class="unit-name"><span class="hero-crown">♛</span> Abhorrant Ghoul King</div>
+              <div class="unit-stats-row">
+                <div class="stat-box"><div class="stat-v">6"</div><div class="stat-l">Move</div></div>
+                <div class="stat-box"><div class="stat-v">7</div><div class="stat-l">HP</div></div>
+                <div class="stat-box"><div class="stat-v">4+</div><div class="stat-l">Save</div></div>
+                <div class="stat-box"><div class="stat-v">2</div><div class="stat-l">Ctrl</div></div>
+              </div>
+              <div class="hp-row">
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard broken"></div><div class="hp-shard broken"></div>
+              </div>
+              <span class="status-shard" style="color:#c080ff;border-color:rgba(180,100,255,0.3)">Deranged</span>
+            </div>
+            <div class="dmg-col">
+              <div class="dmg-btn">−</div>
+              <div class="dmg-btn">+</div>
+              <div class="dmg-btn destroy-btn">☠</div>
+            </div>
+          </div>
+        </div>
+        <div class="unit-pane">
+          <div class="unit-pane-bg"></div>
+          <div class="unit-pane-content">
+            <div class="unit-info">
+              <div class="unit-name">Cryptguard</div>
+              <div class="unit-stats-row">
+                <div class="stat-box"><div class="stat-v">6"</div><div class="stat-l">Move</div></div>
+                <div class="stat-box"><div class="stat-v">1×10</div><div class="stat-l">HP</div></div>
+                <div class="stat-box"><div class="stat-v">4+</div><div class="stat-l">Save</div></div>
+              </div>
+              <div class="hp-row">
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard broken"></div>
+                <div class="hp-shard broken"></div><div class="hp-shard broken"></div>
+              </div>
+            </div>
+            <div class="dmg-col"><div class="dmg-btn">−</div><div class="dmg-btn">+</div></div>
+          </div>
+        </div>
+        <div class="unit-pane">
+          <div class="unit-pane-bg"></div>
+          <div class="unit-pane-content">
+            <div class="unit-info">
+              <div class="unit-name">Morbheg Knights</div>
+              <div class="unit-stats-row">
+                <div class="stat-box"><div class="stat-v">10"</div><div class="stat-l">Move</div></div>
+                <div class="stat-box"><div class="stat-v">3×3</div><div class="stat-l">HP</div></div>
+                <div class="stat-box"><div class="stat-v">4+</div><div class="stat-l">Save</div></div>
+              </div>
+              <div class="hp-row">
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard broken"></div>
+              </div>
+            </div>
+            <div class="dmg-col"><div class="dmg-btn">−</div><div class="dmg-btn">+</div></div>
+          </div>
+        </div>
+        <div class="unit-pane" style="opacity:0.3">
+          <div class="unit-pane-content">
+            <div class="unit-info">
+              <div class="unit-name" style="text-decoration:line-through;color:rgba(255,255,255,0.3)">Varghulf Courtier</div>
+              <div style="font-size:10px;color:#cc2222;margin-top:4px;letter-spacing:0.1em">☠ DESTROYED</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center -->
+    <div class="center-strip">
+      <div class="round-panel">
+        <div class="rp-lbl">Battle Round</div>
+        <div class="rp-num">2</div>
+        <div class="rp-pips">
+          <div class="pip done"></div>
+          <div class="pip active"></div>
+          <div class="pip"></div>
+          <div class="pip"></div>
+        </div>
+      </div>
+      <div class="phase-panel" style="border-color:rgba(249,115,22,0.5);color:#f97316;box-shadow:0 0 14px rgba(249,115,22,0.1)">
+        <div class="pp-name">⚔ Combat</div>
+        <div class="pp-turn">Player 1 · tap for guide</div>
+      </div>
+      <div class="nav">
+        <button class="nav-btn" style="border-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.2)">‹</button>
+        <button class="nav-btn" style="border-color:rgba(249,115,22,0.5);color:#f97316">NEXT›</button>
+      </div>
+      <div class="divider"></div>
+      <div class="score-pane">
+        <div class="sp-hdr">Score</div>
+        <div class="sp-row"><span class="sp-n">Player 1</span><span class="sp-v" style="color:#cc2222;text-shadow:0 0 8px rgba(200,30,30,0.5)">7</span></div>
+        <div class="sp-row"><span class="sp-n">Player 2</span><span class="sp-v" style="color:#22aa22;text-shadow:0 0 8px rgba(30,160,30,0.5)">5</span></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="divider"></div>
+      <button class="c-btn">Rulebooks</button>
+      <button class="c-btn" style="color:rgba(180,30,30,0.4)">End Game</button>
+    </div>
+
+    <!-- Player 2 Skaven — deep emerald glass -->
+    <div class="player-panel" style="--faction-color:#22aa22;--faction-glow:rgba(20,160,20,0.4);--faction-muted:#115511;--pane-bg:rgba(20,120,20,1);border-right:none">
+      <div class="panel-bg" style="background:radial-gradient(ellipse at 80% 40%, rgba(20,120,20,0.15) 0%, transparent 60%)"></div>
+      <div class="panel-header">
+        <div class="header-color-block" style="--header-color:linear-gradient(135deg, #1a5a0a 0%, #0a3a05 100%)">
+          <div class="header-info">
+            <div class="player-name">Player 2</div>
+            <div class="player-faction">Skaven · Gnawfeast</div>
+          </div>
+        </div>
+        <div class="vp-panel" style="--vp-color:#44cc44">
+          <div class="vp-num">5</div>
+          <div class="vp-tag">VP</div>
+          <div class="vp-btns"><div class="vp-b">−</div><div class="vp-b">+</div></div>
+        </div>
+      </div>
+      <div class="regiment-label" style="--faction-muted:#115511">General's Regiment</div>
+      <div class="units">
+        <div class="unit-pane hero">
+          <div class="unit-pane-bg"></div>
+          <div class="unit-pane-content">
+            <div class="unit-info">
+              <div class="unit-name"><span class="hero-crown">♛</span> Clawlord on Gnaw-Beast</div>
+              <div class="unit-stats-row">
+                <div class="stat-box"><div class="stat-v">10"</div><div class="stat-l">Move</div></div>
+                <div class="stat-box"><div class="stat-v">8</div><div class="stat-l">HP</div></div>
+                <div class="stat-box"><div class="stat-v">4+</div><div class="stat-l">Save</div></div>
+              </div>
+              <div class="hp-row">
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard broken"></div><div class="hp-shard broken"></div>
+              </div>
+              <span class="status-shard" style="color:#ef4444;border-color:rgba(239,68,68,0.35)">Bloodmarked</span>
+            </div>
+            <div class="dmg-col">
+              <div class="dmg-btn">−</div>
+              <div class="dmg-btn">+</div>
+              <div class="dmg-btn destroy-btn">☠</div>
+            </div>
+          </div>
+        </div>
+        <div class="unit-pane">
+          <div class="unit-pane-bg"></div>
+          <div class="unit-pane-content">
+            <div class="unit-info">
+              <div class="unit-name">Clanrats</div>
+              <div class="unit-stats-row">
+                <div class="stat-box"><div class="stat-v">6"</div><div class="stat-l">Move</div></div>
+                <div class="stat-box"><div class="stat-v">1×10</div><div class="stat-l">HP</div></div>
+                <div class="stat-box"><div class="stat-v">5+</div><div class="stat-l">Save</div></div>
+              </div>
+              <div class="hp-row">
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard broken"></div><div class="hp-shard broken"></div>
+                <div class="hp-shard broken"></div><div class="hp-shard broken"></div>
+              </div>
+            </div>
+            <div class="dmg-col"><div class="dmg-btn">−</div><div class="dmg-btn">+</div></div>
+          </div>
+        </div>
+        <div class="unit-pane">
+          <div class="unit-pane-bg"></div>
+          <div class="unit-pane-content">
+            <div class="unit-info">
+              <div class="unit-name">Stormvermin</div>
+              <div class="unit-stats-row">
+                <div class="stat-box"><div class="stat-v">6"</div><div class="stat-l">Move</div></div>
+                <div class="stat-box"><div class="stat-v">2×5</div><div class="stat-l">HP</div></div>
+                <div class="stat-box"><div class="stat-v">3+</div><div class="stat-l">Save</div></div>
+              </div>
+              <div class="hp-row">
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard"></div>
+                <div class="hp-shard"></div><div class="hp-shard broken"></div>
+              </div>
+            </div>
+            <div class="dmg-col"><div class="dmg-btn">−</div><div class="dmg-btn">+</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
