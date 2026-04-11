@@ -141,15 +141,15 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
           <div className="flex items-center gap-2.5 min-w-0">
             {/* Unit icon */}
             <div style={{
-              width: 40, height: 40, borderRadius: 9, flexShrink: 0,
+              width: 56, height: 56, borderRadius: 11, flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: `rgba(${theme.edgeRgb},0.10)`,
               border: `1px solid rgba(${theme.edgeRgb},0.2)`,
               color: accentColor,
             }}>
               {hasUnitIcon(unit.id)
-                ? <UnitIcon unitId={unit.id} size={26} color={accentColor} />
-                : <UnitTypeIcon keywords={unit.keywords} color={accentColor} size={22} />
+                ? <UnitIcon unitId={unit.id} size={38} color={accentColor} />
+                : <UnitTypeIcon keywords={unit.keywords} color={accentColor} size={32} />
               }
             </div>
 
@@ -159,13 +159,13 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
                 <div
                   className="font-display font-bold truncate"
                   style={{
-                    fontFamily: 'Cinzel, serif', fontSize: 13, fontWeight: 700,
+                    fontFamily: 'Cinzel, serif', fontSize: 17, fontWeight: 700,
                     color: theme.inkColor, textTransform: 'uppercase', letterSpacing: '0.05em',
                   }}
                 >
                   {unit.name}
                   {unit.count > 1 && (
-                    <span style={{ marginLeft: 5, fontWeight: 400, opacity: 0.5, fontSize: 11 }}>
+                    <span style={{ marginLeft: 6, fontWeight: 400, opacity: 0.5, fontSize: 14 }}>
                       ×{unit.count}
                     </span>
                   )}
@@ -189,14 +189,14 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
               </div>
 
               {/* Stat row */}
-              <div className="flex items-center gap-2.5 mt-1 flex-wrap" style={{ color: theme.subInkColor }}>
-                <StatPill icon={<MoveIcon size={12} />} label={`${unit.move}"`} />
-                <StatPill icon={<HealthIcon size={12} />} label={unit.health} />
-                <StatPill icon={<ShieldIcon size={12} />} label={`${unit.save}+`} />
-                <StatPill icon={<ControlIcon size={12} />} label={totalControl} />
+              <div className="flex items-center gap-3 mt-1.5 flex-wrap" style={{ color: theme.subInkColor }}>
+                <StatPill icon={<MoveIcon size={22} />} label={`${unit.move}"`} />
+                <StatPill icon={<HealthIcon size={22} />} label={unit.health} />
+                <StatPill icon={<ShieldIcon size={22} />} label={`${unit.save}+`} />
+                <StatPill icon={<ControlIcon size={22} />} label={totalControl} />
                 {keywordWard && (
                   <StatPill
-                    icon={<WardIcon size={12} color="#4f86c6" />}
+                    icon={<WardIcon size={22} color="#4f86c6" />}
                     label={`${unit.wardValue}+`}
                     color="#4f86c6"
                   />
@@ -551,8 +551,8 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
 function StatPill({ icon, label, color }) {
   return (
     <span
-      className="flex items-center gap-1 tabular-nums"
-      style={{ color: color || 'inherit', fontSize: 12, fontWeight: 700 }}
+      className="flex items-center gap-1.5 tabular-nums"
+      style={{ color: color || 'inherit', fontSize: 28, fontWeight: 700 }}
     >
       {icon}
       {label}

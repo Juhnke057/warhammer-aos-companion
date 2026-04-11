@@ -88,8 +88,8 @@ export default function CenterStrip() {
 
   // Reusable button base style
   const cBtn = (extra = {}) => ({
-    width: '100%', padding: '7px 8px', borderRadius: 10,
-    fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700,
+    width: '100%', padding: '10px 12px', borderRadius: 12,
+    fontFamily: 'Cinzel, serif', fontSize: 14, fontWeight: 700,
     textTransform: 'uppercase', letterSpacing: '0.10em',
     border: `1px solid ${C.border}`, background: C.panel,
     color: C.textDim, cursor: 'pointer',
@@ -98,9 +98,9 @@ export default function CenterStrip() {
 
   return (
     <div
-      className="panel-texture flex-shrink-0 flex flex-col items-center gap-2 py-2 px-2"
+      className="panel-texture flex-shrink-0 flex flex-col items-center gap-2 py-2 px-3"
       style={{
-        width: 148,
+        width: 440,
         background: C.bg,
         borderLeft:  `2px solid ${C.border}`,
         borderRight: `2px solid ${C.border}`,
@@ -110,7 +110,7 @@ export default function CenterStrip() {
       <div
         className="w-full text-center round-badge"
         style={{
-          padding: '12px 8px 10px',
+          padding: '14px 12px 12px',
           background: `linear-gradient(160deg, #1e1008 0%, #130a02 100%)`,
           border: `1px solid ${C.goldDim}`,
           boxShadow: `0 2px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)`,
@@ -122,22 +122,22 @@ export default function CenterStrip() {
           position: 'absolute', top: 0, left: '25%', right: '25%', height: 2,
           background: C.gold, boxShadow: `0 0 8px ${C.gold}80`, borderRadius: 2,
         }} />
-        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, color: C.goldDim, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 13, color: C.goldDim, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
           Battle Round
         </div>
-        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 58, fontWeight: 900, color: C.gold, lineHeight: 1, textShadow: `0 0 20px ${C.gold}50`, marginTop: 2 }}>
+        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 84, fontWeight: 900, color: C.gold, lineHeight: 1, textShadow: `0 0 24px ${C.gold}50`, marginTop: 2 }}>
           {battleRound}
         </div>
-        <div className="flex justify-center gap-2 mt-2">
+        <div className="flex justify-center gap-2.5 mt-2">
           {rounds.map(r => (
             <div key={r} style={{
-              width:        r === battleRound ? 12 : 7,
-              height:       r === battleRound ? 7  : 7,
-              borderRadius: r === battleRound ? 4  : '50%',
+              width:        r === battleRound ? 18 : 10,
+              height:       r === battleRound ? 10 : 10,
+              borderRadius: r === battleRound ? 6  : '50%',
               background:   r < battleRound  ? C.goldDim
                           : r === battleRound ? C.gold
                           : C.textFaint,
-              boxShadow:    r === battleRound ? `0 0 6px ${C.gold}80` : 'none',
+              boxShadow:    r === battleRound ? `0 0 8px ${C.gold}80` : 'none',
               transition: 'all 0.3s ease',
             }} />
           ))}
@@ -148,12 +148,12 @@ export default function CenterStrip() {
       <div
         className="w-full text-center"
         style={{
-          padding: '6px 8px', borderRadius: 8,
+          padding: '8px 12px', borderRadius: 10,
           background: `rgba(212,160,23,0.08)`,
           border: `1px solid rgba(212,160,23,0.18)`,
         }}
       >
-        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', color: C.gold, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 14, fontWeight: 700, letterSpacing: '0.06em', color: C.gold, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {turnLabel}
         </div>
       </div>
@@ -164,18 +164,18 @@ export default function CenterStrip() {
           onClick={() => setShowTwistDraw(true)}
           className="w-full text-center active:scale-95 transition-all glow-pulse"
           style={{
-            padding: '10px 8px', borderRadius: 12,
+            padding: '14px 12px', borderRadius: 14,
             background: `linear-gradient(135deg, ${realmColor}25 0%, ${realmColor}10 100%)`,
             border: `2px solid ${realmColor}`,
             boxShadow: `0 0 16px ${realmColor}30`,
             color: realmColor,
           }}
         >
-          <RealmIcon size={22} color={realmColor} style={{ margin: '0 auto 4px' }} />
-          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+          <RealmIcon size={36} color={realmColor} style={{ margin: '0 auto 6px' }} />
+          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
             Draw Twist Card
           </div>
-          <div style={{ fontSize: 9, marginTop: 2, color: realmColor + '80' }}>
+          <div style={{ fontSize: 12, marginTop: 3, color: realmColor + '80' }}>
             tap to open
           </div>
         </button>
@@ -187,18 +187,18 @@ export default function CenterStrip() {
           onClick={() => setShowTwist(true)}
           className="w-full text-center active:scale-95 transition-all"
           style={{
-            padding: '8px', borderRadius: 10,
+            padding: '12px', borderRadius: 12,
             background: C.panel,
             border: `1px solid ${activeTwist.realm === 'aqshy' ? 'rgba(204,48,48,0.4)' : 'rgba(42,138,42,0.4)'}`,
           }}
         >
-          <div className="flex items-center justify-center gap-1.5 mb-0.5">
-            <TwistIcon size={11} color={activeTwist.realm === 'aqshy' ? '#cc3030' : '#2a8a2a'} />
-            <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: activeTwist.realm === 'aqshy' ? '#cc3030' : '#2a8a2a' }}>
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <TwistIcon size={16} color={activeTwist.realm === 'aqshy' ? '#cc3030' : '#2a8a2a'} />
+            <div style={{ fontFamily: 'Cinzel, serif', fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: activeTwist.realm === 'aqshy' ? '#cc3030' : '#2a8a2a' }}>
               Twist Active
             </div>
           </div>
-          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700, color: C.text }}>
+          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 15, fontWeight: 700, color: C.text }}>
             {activeTwist.name}
           </div>
         </button>
@@ -209,42 +209,42 @@ export default function CenterStrip() {
         onClick={() => setShowPhaseHelp(true)}
         className="w-full text-center active:scale-95 transition-all phase-btn"
         style={{
-          padding: '11px 8px',
+          padding: '16px 12px',
           background: `linear-gradient(160deg, ${phaseColor}28 0%, ${phaseColor}10 100%)`,
           border: `2px solid ${phaseColor}70`,
-          boxShadow: `0 0 14px ${phaseColor}18`,
+          boxShadow: `0 0 18px ${phaseColor}20`,
           color: phaseColor,
         }}
       >
-        <PhaseIcon size={30} color={phaseColor} style={{ margin: '0 auto 6px' }} />
-        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: phaseColor }}>
+        <PhaseIcon size={52} color={phaseColor} style={{ margin: '0 auto 8px' }} />
+        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 18, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: phaseColor }}>
           {currentPhase?.label}
         </div>
-        <div style={{ fontSize: 9, marginTop: 2, color: phaseColor + '60', fontStyle: 'italic' }}>
+        <div style={{ fontSize: 12, marginTop: 3, color: phaseColor + '60', fontStyle: 'italic' }}>
           tap for guide
         </div>
       </button>
 
       {/* ── Phase navigation ────────────────────────────────────────────────── */}
-      <div className="w-full flex gap-1">
+      <div className="w-full flex gap-2">
         <button
           onClick={prevPhase}
           disabled={currentPhaseIndex === 0 || (currentPhaseIndex === 1 && playerTurnsDoneThisRound >= 1)}
-          className="flex items-center justify-center py-2.5 disabled:opacity-20 active:scale-95 transition-transform"
-          style={{ width: 38, borderRadius: 8, border: `1px solid ${C.border}`, background: C.panel, color: C.goldDim }}
+          className="flex items-center justify-center py-3.5 disabled:opacity-20 active:scale-95 transition-transform"
+          style={{ width: 56, borderRadius: 10, border: `1px solid ${C.border}`, background: C.panel, color: C.goldDim }}
         >
-          <ChevronLeftIcon size={15} color={C.goldDim} />
+          <ChevronLeftIcon size={22} color={C.goldDim} />
         </button>
         <button
           onClick={nextPhase}
-          className="flex-1 py-2.5 active:scale-95 transition-all"
+          className="flex-1 py-3.5 active:scale-95 transition-all"
           style={{
-            borderRadius: 8,
+            borderRadius: 10,
             background: `linear-gradient(135deg, ${phaseColor}dd 0%, ${phaseColor}aa 100%)`,
             color: 'white',
-            fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700,
+            fontFamily: 'Cinzel, serif', fontSize: 18, fontWeight: 700,
             letterSpacing: '0.06em',
-            boxShadow: `0 2px 8px ${phaseColor}40`,
+            boxShadow: `0 2px 10px ${phaseColor}40`,
           }}
         >
           Next →
@@ -259,31 +259,20 @@ export default function CenterStrip() {
       {/* ── Objective control tracker ────────────────────────────────────────── */}
       <div
         className="w-full overflow-hidden"
-        style={{ background: C.panel, border: `1px solid ${C.goldFade}`, borderRadius: 10 }}
+        style={{ background: C.panel, border: `1px solid ${C.goldFade}`, borderRadius: 12 }}
       >
         <div
-          className="flex items-center justify-center gap-1"
-          style={{ padding: '4px 8px', borderBottom: `1px solid ${C.textFaint}` }}
+          className="flex items-center justify-center gap-1.5"
+          style={{ padding: '7px 12px', borderBottom: `1px solid ${C.textFaint}` }}
         >
-          <span style={{ fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.22em', color: C.goldDim }}>
+          <span style={{ fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.22em', color: C.goldDim }}>
             Objectives
           </span>
         </div>
-        {/* 3 + 2 grid */}
-        <div style={{ padding: '5px 5px 4px' }}>
-          <div className="flex gap-1 mb-1">
-            {OBJECTIVES.slice(0, 3).map(obj => (
-              <ObjButton
-                key={obj.id}
-                obj={obj}
-                owner={objectiveControl[obj.id]}
-                players={players}
-                onCycle={() => cycleObjectiveControl(obj.id)}
-              />
-            ))}
-          </div>
-          <div className="flex gap-1 justify-center">
-            {OBJECTIVES.slice(3).map(obj => (
+        {/* 5-in-a-row */}
+        <div style={{ padding: '7px 7px 5px' }}>
+          <div className="flex gap-1.5">
+            {OBJECTIVES.map(obj => (
               <ObjButton
                 key={obj.id}
                 obj={obj}
@@ -299,11 +288,11 @@ export default function CenterStrip() {
           {players.map((_, i) => {
             const col = playerVpColor(i)
             return (
-              <div key={i} className="flex-1 text-center" style={{ padding: '3px 4px', borderRight: i === 0 ? `1px solid ${C.textFaint}` : 'none' }}>
-                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 900, color: objCounts[i] > 0 ? col : C.textFaint }}>
+              <div key={i} className="flex-1 text-center" style={{ padding: '5px 6px', borderRight: i === 0 ? `1px solid ${C.textFaint}` : 'none' }}>
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 16, fontWeight: 900, color: objCounts[i] > 0 ? col : C.textFaint }}>
                   {objCounts[i]}
                 </span>
-                <span style={{ fontSize: 7, color: C.textDim, marginLeft: 2 }}>obj</span>
+                <span style={{ fontSize: 11, color: C.textDim, marginLeft: 3 }}>obj</span>
               </div>
             )
           })}
@@ -313,44 +302,57 @@ export default function CenterStrip() {
       {/* ── VP scoreboard ───────────────────────────────────────────────────── */}
       <div
         className="w-full overflow-hidden"
-        style={{ background: C.panel, border: `1px solid ${C.goldFade}`, borderRadius: 12 }}
+        style={{ background: C.panel, border: `1px solid ${C.goldFade}`, borderRadius: 14 }}
       >
         <div
-          className="flex items-center justify-center gap-1.5"
-          style={{ padding: '5px 8px', borderBottom: `1px solid ${C.textFaint}` }}
+          className="flex items-center justify-center gap-2"
+          style={{ padding: '7px 12px', borderBottom: `1px solid ${C.textFaint}` }}
         >
-          <StarIcon size={10} color={C.goldDim} />
-          <span style={{ fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.25em', color: C.goldDim }}>
+          <StarIcon size={14} color={C.goldDim} />
+          <span style={{ fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.25em', color: C.goldDim }}>
             Score
           </span>
         </div>
-        {players.map((p, i) => {
-          const col = playerVpColor(i)
-          const isUnderdog = underdogIndex === i
-          return (
-            <div key={i} className="flex items-center justify-between" style={{ padding: '6px 10px', borderTop: i > 0 ? `1px solid ${C.textFaint}` : 'none' }}>
-              <div style={{ minWidth: 0 }}>
-                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 10, color: C.textDim, display: 'block', maxWidth: 68, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div className="flex">
+          {players.map((p, i) => {
+            const col = playerVpColor(i)
+            const isUnderdog = underdogIndex === i
+            const isRight = i === 1
+            return (
+              <div
+                key={i}
+                className="flex-1 flex flex-col"
+                style={{
+                  padding: '10px 14px',
+                  borderLeft: i > 0 ? `1px solid ${C.textFaint}` : 'none',
+                  alignItems: isRight ? 'flex-end' : 'flex-start',
+                }}
+              >
+                <span style={{
+                  fontFamily: 'Cinzel, serif', fontSize: 14, color: C.textDim,
+                  maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap', textAlign: isRight ? 'right' : 'left',
+                }}>
                   {p.name}
                 </span>
                 {isUnderdog && (
                   <span style={{
-                    fontFamily: 'Cinzel, serif', fontSize: 7, fontWeight: 700,
+                    fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700,
                     textTransform: 'uppercase', letterSpacing: '0.1em',
                     color: '#6366f1', background: 'rgba(99,102,241,0.12)',
                     border: '1px solid rgba(99,102,241,0.3)',
-                    padding: '0px 4px', borderRadius: 4, display: 'inline-block', marginTop: 1,
+                    padding: '1px 6px', borderRadius: 4, display: 'inline-block', marginTop: 2,
                   }}>
                     ⚑ Underdog
                   </span>
                 )}
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 44, fontWeight: 900, color: col, lineHeight: 1, marginTop: 4 }}>
+                  {vp[i]}
+                </span>
               </div>
-              <span style={{ fontFamily: 'Cinzel, serif', fontSize: 28, fontWeight: 900, color: col, lineHeight: 1 }}>
-                {vp[i]}
-              </span>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
 
       {/* Spacer */}
@@ -367,7 +369,7 @@ export default function CenterStrip() {
         className="w-full flex items-center justify-center gap-2 active:scale-95 transition-transform"
         style={cBtn()}
       >
-        <BookIcon size={12} color={C.goldDim} />
+        <BookIcon size={16} color={C.goldDim} />
         Rulebooks
       </button>
 
@@ -377,7 +379,7 @@ export default function CenterStrip() {
         className="w-full flex items-center justify-center gap-2 active:scale-95 transition-transform"
         style={cBtn({ background: 'rgba(176,24,24,0.07)', color: '#cc3030', borderColor: 'rgba(176,24,24,0.22)' })}
       >
-        <CloseIcon size={12} color="#cc3030" />
+        <CloseIcon size={16} color="#cc3030" />
         End Game
       </button>
 
@@ -555,17 +557,17 @@ function ObjButton({ obj, owner, players, onCycle }) {
       onClick={onCycle}
       className="flex-1 active:scale-90 transition-transform"
       style={{
-        padding: '3px 2px', borderRadius: 6,
+        padding: '6px 4px', borderRadius: 8,
         background: ownerBg,
         border: `1px solid ${ownerBorder}`,
         textAlign: 'center',
         minWidth: 0,
       }}
     >
-      <div style={{ fontFamily: 'Cinzel, serif', fontSize: 7, fontWeight: 700, color: ownerColor, textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.2 }}>
+      <div style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700, color: ownerColor, textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.2 }}>
         {obj.short}
       </div>
-      <div style={{ fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 900, color: owner === null ? '#3a2a10' : ownerColor, lineHeight: 1 }}>
+      <div style={{ fontFamily: 'Cinzel, serif', fontSize: 13, fontWeight: 900, color: owner === null ? '#3a2a10' : ownerColor, lineHeight: 1 }}>
         {ownerLabel}
       </div>
     </button>
