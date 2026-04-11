@@ -81,7 +81,7 @@ function PlayerSetupPanel({ playerIndex }) {
 
         {/* Faction select */}
         <div>
-          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.22em', color: p.sub, marginBottom: 8 }}>
+          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: p.ink, marginBottom: 8 }}>
             Faction
           </div>
           <div className="grid grid-cols-3 gap-2">
@@ -106,7 +106,7 @@ function PlayerSetupPanel({ playerIndex }) {
                   }}>
                     {f.label}
                   </div>
-                  <div style={{ fontFamily: 'IM Fell English, serif', fontSize: 10, fontStyle: 'italic', color: sel ? ft.subInkColor : '#6a5a40', marginTop: 2 }}>
+                  <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 600, color: sel ? ft.archHeaderColor : '#5a4a30', marginTop: 3, letterSpacing: '0.06em' }}>
                     {f.sub}
                   </div>
                 </button>
@@ -117,7 +117,7 @@ function PlayerSetupPanel({ playerIndex }) {
 
         {/* Army variant */}
         <div>
-          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.22em', color: p.sub, marginBottom: 8 }}>
+          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: p.ink, marginBottom: 8 }}>
             Army
           </div>
           <div className="space-y-2">
@@ -146,7 +146,7 @@ function PlayerSetupPanel({ playerIndex }) {
           <>
             {/* Regiment ability */}
             <div>
-              <div style={{ fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.22em', color: p.sub, marginBottom: 8 }}>
+              <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: p.ink, marginBottom: 8 }}>
                 Regiment Ability
               </div>
               <div className="space-y-2">
@@ -165,7 +165,7 @@ function PlayerSetupPanel({ playerIndex }) {
                       <div style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 12, color: sel ? p.arch : p.ink }}>
                         {ra.name}
                       </div>
-                      <div style={{ fontSize: 11, fontFamily: 'IM Fell English, serif', marginTop: 4, lineHeight: 1.45, color: p.sub }}>
+                      <div style={{ fontSize: 12, fontFamily: 'Georgia, serif', marginTop: 4, lineHeight: 1.5, color: p.ink, opacity: 0.75 }}>
                         {ra.effect}
                       </div>
                     </button>
@@ -176,7 +176,7 @@ function PlayerSetupPanel({ playerIndex }) {
 
             {/* Enhancement */}
             <div>
-              <div style={{ fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.22em', color: p.sub, marginBottom: 8 }}>
+              <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: p.ink, marginBottom: 8 }}>
                 General Enhancement
               </div>
               <div className="space-y-2">
@@ -195,7 +195,7 @@ function PlayerSetupPanel({ playerIndex }) {
                       <div style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 12, color: sel ? p.arch : p.ink }}>
                         {en.name}
                       </div>
-                      <div style={{ fontSize: 11, fontFamily: 'IM Fell English, serif', marginTop: 4, lineHeight: 1.45, color: p.sub }}>
+                      <div style={{ fontSize: 12, fontFamily: 'Georgia, serif', marginTop: 4, lineHeight: 1.5, color: p.ink, opacity: 0.75 }}>
                         {en.timing} — {en.effect}
                       </div>
                     </button>

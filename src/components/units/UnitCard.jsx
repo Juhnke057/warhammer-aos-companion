@@ -59,12 +59,12 @@ function HpBoxes({ totalHealth, damagePoints, factionColor }) {
   const boxes   = Math.min(totalHealth, 20)
   const damaged = Math.min(damagePoints, boxes)
   return (
-    <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap', maxWidth: 165, marginTop: 5 }}>
+    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', maxWidth: 200, marginTop: 6 }}>
       {Array.from({ length: boxes }).map((_, i) => (
         <div key={i} style={{
-          width: 12, height: 12, borderRadius: 3,
-          border: `1px solid ${i < damaged ? factionColor + '70' : 'rgba(0,0,0,0.17)'}`,
-          background: i < damaged ? factionColor + '55' : 'rgba(255,255,255,0.55)',
+          width: 16, height: 16, borderRadius: 4,
+          border: `1.5px solid ${i < damaged ? factionColor + '80' : 'rgba(0,0,0,0.20)'}`,
+          background: i < damaged ? factionColor + '60' : 'rgba(255,255,255,0.60)',
           flexShrink: 0,
         }} />
       ))}
@@ -136,20 +136,20 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
         {/* ── Header row — tap to open warscroll ───────────────────────────── */}
         <button
           onClick={onClick}
-          className="w-full flex items-center justify-between px-3 py-2 text-left active:opacity-70"
+          className="w-full flex items-center justify-between px-3 py-2.5 text-left active:opacity-70"
         >
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0">
             {/* Unit icon */}
             <div style={{
-              width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+              width: 40, height: 40, borderRadius: 9, flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: `rgba(${theme.edgeRgb},0.10)`,
               border: `1px solid rgba(${theme.edgeRgb},0.2)`,
               color: accentColor,
             }}>
               {hasUnitIcon(unit.id)
-                ? <UnitIcon unitId={unit.id} size={22} color={accentColor} />
-                : <UnitTypeIcon keywords={unit.keywords} color={accentColor} size={18} />
+                ? <UnitIcon unitId={unit.id} size={26} color={accentColor} />
+                : <UnitTypeIcon keywords={unit.keywords} color={accentColor} size={22} />
               }
             </div>
 
@@ -159,13 +159,13 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
                 <div
                   className="font-display font-bold truncate"
                   style={{
-                    fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700,
-                    color: theme.inkColor, textTransform: 'uppercase', letterSpacing: '0.06em',
+                    fontFamily: 'Cinzel, serif', fontSize: 13, fontWeight: 700,
+                    color: theme.inkColor, textTransform: 'uppercase', letterSpacing: '0.05em',
                   }}
                 >
                   {unit.name}
                   {unit.count > 1 && (
-                    <span style={{ marginLeft: 4, fontWeight: 400, opacity: 0.45, fontSize: 10 }}>
+                    <span style={{ marginLeft: 5, fontWeight: 400, opacity: 0.5, fontSize: 11 }}>
                       ×{unit.count}
                     </span>
                   )}
@@ -175,28 +175,28 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
                   <span
                     className="flex items-center gap-0.5 flex-shrink-0"
                     style={{
-                      fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 700,
+                      fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700,
                       background: `rgba(${theme.edgeRgb},0.12)`,
                       color: theme.archHeaderColor,
                       border: `1px solid rgba(${theme.edgeRgb},0.28)`,
-                      padding: '1px 5px', borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.12em',
+                      padding: '2px 6px', borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.1em',
                     }}
                   >
-                    <CrownIcon size={8} color={theme.archHeaderColor} />
+                    <CrownIcon size={9} color={theme.archHeaderColor} />
                     Hero
                   </span>
                 )}
               </div>
 
               {/* Stat row */}
-              <div className="flex items-center gap-2 mt-0.5 flex-wrap" style={{ color: theme.subInkColor }}>
-                <StatPill icon={<MoveIcon size={10} />} label={`${unit.move}"`} />
-                <StatPill icon={<HealthIcon size={10} />} label={unit.health} />
-                <StatPill icon={<ShieldIcon size={10} />} label={`${unit.save}+`} />
-                <StatPill icon={<ControlIcon size={10} />} label={totalControl} />
+              <div className="flex items-center gap-2.5 mt-1 flex-wrap" style={{ color: theme.subInkColor }}>
+                <StatPill icon={<MoveIcon size={12} />} label={`${unit.move}"`} />
+                <StatPill icon={<HealthIcon size={12} />} label={unit.health} />
+                <StatPill icon={<ShieldIcon size={12} />} label={`${unit.save}+`} />
+                <StatPill icon={<ControlIcon size={12} />} label={totalControl} />
                 {keywordWard && (
                   <StatPill
-                    icon={<WardIcon size={10} color="#4f86c6" />}
+                    icon={<WardIcon size={12} color="#4f86c6" />}
                     label={`${unit.wardValue}+`}
                     color="#4f86c6"
                   />
@@ -205,7 +205,7 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
             </div>
           </div>
 
-          <ChevronRight size={13} color={accentColor + '80'} />
+          <ChevronRight size={15} color={accentColor + '80'} />
         </button>
 
         {/* ── Cornered Rat passive ─────────────────────────────────────────── */}
@@ -218,8 +218,8 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
               borderRadius: 8,
             }}
           >
-            <LightningIcon size={11} color="#f97316" />
-            <span style={{ fontSize: 10, fontFamily: 'Cinzel, serif', fontWeight: 700, color: '#f97316' }}>
+            <LightningIcon size={12} color="#f97316" />
+            <span style={{ fontSize: 11, fontFamily: 'Cinzel, serif', fontWeight: 700, color: '#f97316' }}>
               Cornered Rat — Warpforged Halberd +3 Attacks while damaged
             </span>
           </div>
@@ -239,15 +239,15 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
                     background: s.bg, border: `1px solid ${s.border}`, borderRadius: 20,
                   }}
                 >
-                  <span style={{ fontSize: 9, fontFamily: 'Cinzel, serif', fontWeight: 700, color: s.color }}>
+                  <span style={{ fontSize: 11, fontFamily: 'Cinzel, serif', fontWeight: 700, color: s.color }}>
                     {e.name}
                   </span>
                   {e.expiresAt && (
-                    <span style={{ color: s.color + '70', fontSize: 8 }}>
+                    <span style={{ color: s.color + '70', fontSize: 10 }}>
                       {EXPIRY_LABELS[e.expiresAt]}
                     </span>
                   )}
-                  <span style={{ color: s.color + '80', fontSize: 9 }}>✕</span>
+                  <span style={{ color: s.color + '80', fontSize: 11 }}>✕</span>
                 </button>
               )
             })}
@@ -266,9 +266,9 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
               />
               <span
                 style={{
-                  fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700,
+                  fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700,
                   color: theme.subInkColor, flexShrink: 0, marginLeft: 'auto',
-                  minWidth: 58, textAlign: 'right',
+                  minWidth: 64, textAlign: 'right',
                 }}
               >
                 {isSwarm
@@ -294,7 +294,7 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
 
               <div className="flex-1 text-center">
                 <div style={{
-                  fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700,
+                  fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700,
                   color: theme.subInkColor,
                 }}>
                   {isSwarm
@@ -355,7 +355,7 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
                 }}
               >
                 <WardIcon size={10} color="#4f86c6" />
-                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, color: '#4f86c6' }}>
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700, color: '#4f86c6' }}>
                   Ward ({keywordWard}+) — remember to roll for each damage point
                 </span>
               </div>
@@ -372,7 +372,7 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
                 }}
               >
                 <LightningIcon size={10} color="#f97316" />
-                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, color: '#f97316' }}>
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700, color: '#f97316' }}>
                   Charged — Charge (+1 Damage) weapons are active this turn
                 </span>
               </div>
@@ -412,7 +412,7 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
             <SkullIcon size={14} color="#aa2222" />
             <div
               className="flex-1"
-              style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#aa2222' }}
+              style={{ fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.10em', color: '#aa2222' }}
             >
               Destroyed
             </div>
@@ -452,7 +452,7 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
           <div className="px-3 pb-3 flex items-center justify-between">
             <div
               className="flex items-center gap-1.5"
-              style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#4f46e5' }}
+              style={{ fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#4f46e5' }}
             >
               <ReserveIcon size={12} color="#4f46e5" />
               In Reserve
@@ -551,8 +551,8 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
 function StatPill({ icon, label, color }) {
   return (
     <span
-      className="flex items-center gap-0.5 tabular-nums"
-      style={{ color: color || 'inherit', fontSize: 10, fontWeight: 600 }}
+      className="flex items-center gap-1 tabular-nums"
+      style={{ color: color || 'inherit', fontSize: 12, fontWeight: 700 }}
     >
       {icon}
       {label}

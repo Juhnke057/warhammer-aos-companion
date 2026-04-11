@@ -89,8 +89,8 @@ export default function CenterStrip() {
   // Reusable button base style
   const cBtn = (extra = {}) => ({
     width: '100%', padding: '7px 8px', borderRadius: 10,
-    fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700,
-    textTransform: 'uppercase', letterSpacing: '0.12em',
+    fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700,
+    textTransform: 'uppercase', letterSpacing: '0.10em',
     border: `1px solid ${C.border}`, background: C.panel,
     color: C.textDim, cursor: 'pointer',
     ...extra,
@@ -122,10 +122,10 @@ export default function CenterStrip() {
           position: 'absolute', top: 0, left: '25%', right: '25%', height: 2,
           background: C.gold, boxShadow: `0 0 8px ${C.gold}80`, borderRadius: 2,
         }} />
-        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 8, color: C.goldDim, letterSpacing: '0.25em', textTransform: 'uppercase' }}>
+        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, color: C.goldDim, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
           Battle Round
         </div>
-        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 52, fontWeight: 900, color: C.gold, lineHeight: 1, textShadow: `0 0 20px ${C.gold}50`, marginTop: 2 }}>
+        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 58, fontWeight: 900, color: C.gold, lineHeight: 1, textShadow: `0 0 20px ${C.gold}50`, marginTop: 2 }}>
           {battleRound}
         </div>
         <div className="flex justify-center gap-2 mt-2">
@@ -153,7 +153,7 @@ export default function CenterStrip() {
           border: `1px solid rgba(212,160,23,0.18)`,
         }}
       >
-        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', color: C.gold, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', color: C.gold, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {turnLabel}
         </div>
       </div>
@@ -172,7 +172,7 @@ export default function CenterStrip() {
           }}
         >
           <RealmIcon size={22} color={realmColor} style={{ margin: '0 auto 4px' }} />
-          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
             Draw Twist Card
           </div>
           <div style={{ fontSize: 9, marginTop: 2, color: realmColor + '80' }}>
@@ -194,11 +194,11 @@ export default function CenterStrip() {
         >
           <div className="flex items-center justify-center gap-1.5 mb-0.5">
             <TwistIcon size={11} color={activeTwist.realm === 'aqshy' ? '#cc3030' : '#2a8a2a'} />
-            <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: activeTwist.realm === 'aqshy' ? '#cc3030' : '#2a8a2a' }}>
+            <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: activeTwist.realm === 'aqshy' ? '#cc3030' : '#2a8a2a' }}>
               Twist Active
             </div>
           </div>
-          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, color: C.text }}>
+          <div style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700, color: C.text }}>
             {activeTwist.name}
           </div>
         </button>
@@ -216,11 +216,11 @@ export default function CenterStrip() {
           color: phaseColor,
         }}
       >
-        <PhaseIcon size={26} color={phaseColor} style={{ margin: '0 auto 5px' }} />
-        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: phaseColor }}>
+        <PhaseIcon size={30} color={phaseColor} style={{ margin: '0 auto 6px' }} />
+        <div style={{ fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: phaseColor }}>
           {currentPhase?.label}
         </div>
-        <div style={{ fontSize: 8, marginTop: 2, color: phaseColor + '60', fontStyle: 'italic' }}>
+        <div style={{ fontSize: 9, marginTop: 2, color: phaseColor + '60', fontStyle: 'italic' }}>
           tap for guide
         </div>
       </button>
@@ -242,8 +242,8 @@ export default function CenterStrip() {
             borderRadius: 8,
             background: `linear-gradient(135deg, ${phaseColor}dd 0%, ${phaseColor}aa 100%)`,
             color: 'white',
-            fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700,
-            letterSpacing: '0.08em',
+            fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700,
+            letterSpacing: '0.06em',
             boxShadow: `0 2px 8px ${phaseColor}40`,
           }}
         >
@@ -296,7 +296,7 @@ export default function CenterStrip() {
         </div>
         {/* Controlled count summary */}
         <div className="flex" style={{ borderTop: `1px solid ${C.textFaint}` }}>
-          {players.map((p, i) => {
+          {players.map((_, i) => {
             const col = playerVpColor(i)
             return (
               <div key={i} className="flex-1 text-center" style={{ padding: '3px 4px', borderRight: i === 0 ? `1px solid ${C.textFaint}` : 'none' }}>
@@ -330,7 +330,7 @@ export default function CenterStrip() {
           return (
             <div key={i} className="flex items-center justify-between" style={{ padding: '6px 10px', borderTop: i > 0 ? `1px solid ${C.textFaint}` : 'none' }}>
               <div style={{ minWidth: 0 }}>
-                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 9, color: C.textDim, display: 'block', maxWidth: 68, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 10, color: C.textDim, display: 'block', maxWidth: 68, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {p.name}
                 </span>
                 {isUnderdog && (
@@ -345,7 +345,7 @@ export default function CenterStrip() {
                   </span>
                 )}
               </div>
-              <span style={{ fontFamily: 'Cinzel, serif', fontSize: 24, fontWeight: 900, color: col, lineHeight: 1 }}>
+              <span style={{ fontFamily: 'Cinzel, serif', fontSize: 28, fontWeight: 900, color: col, lineHeight: 1 }}>
                 {vp[i]}
               </span>
             </div>
@@ -543,10 +543,9 @@ export default function CenterStrip() {
 
 // ── Objective button — cycles Neutral → P1 → P2 → Neutral ────────────────────
 function ObjButton({ obj, owner, players, onCycle }) {
-  const FACTION_THEMES_local = require('../../themes/factionThemes').FACTION_THEMES
   const ownerColor = owner === null
     ? '#3a2a10'
-    : FACTION_THEMES_local[players[owner]?.faction]?.primary ?? '#888'
+    : FACTION_THEMES[players[owner]?.faction]?.primary ?? '#888'
   const ownerBg = owner === null ? 'rgba(255,255,255,0.03)' : ownerColor + '18'
   const ownerBorder = owner === null ? 'rgba(255,255,255,0.08)' : ownerColor + '50'
   const ownerLabel = owner === null ? '—' : `P${owner + 1}`

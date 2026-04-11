@@ -29,7 +29,7 @@ function ParchCard({ title, children }) {
           background: 'rgba(0,0,0,0.04)',
         }}
       >
-        <h2 style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#5a4a30' }}>
+        <h2 style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#3a2a10' }}>
           {title}
         </h2>
       </div>
@@ -82,7 +82,7 @@ export default function PreBattleScreen() {
                 <div style={{ fontFamily: 'Cinzel, serif', fontWeight: 900, fontSize: 13, color: isAttacker ? ft.inkColor : '#2a1a06' }}>
                   {p.name}
                 </div>
-                <div style={{ fontFamily: 'IM Fell English, serif', fontSize: 11, fontStyle: 'italic', color: ft.subInkColor, marginTop: 2 }}>
+                <div style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 600, color: ft.archHeaderColor, marginTop: 3, letterSpacing: '0.04em' }}>
                   {ft.label}
                 </div>
                 <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 6, color: isAttacker ? ft.archHeaderColor : '#8a7050' }}>
@@ -116,7 +116,7 @@ export default function PreBattleScreen() {
               <div style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 13, color: realm === r.id ? r.color : '#2a1a06' }}>
                 {r.label}
               </div>
-              <div style={{ fontFamily: 'IM Fell English, serif', fontSize: 11, fontStyle: 'italic', color: '#5a4a30', marginTop: 2 }}>
+              <div style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 600, color: '#5a4a30', marginTop: 3, letterSpacing: '0.04em' }}>
                 {r.sub}
               </div>
             </button>
@@ -143,7 +143,7 @@ export default function PreBattleScreen() {
               <div style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 13, color: deploymentMap === d.id ? '#8a6010' : '#2a1a06' }}>
                 {d.label}
               </div>
-              <div style={{ fontFamily: 'IM Fell English, serif', fontSize: 11, fontStyle: 'italic', color: '#5a4a30', marginTop: 3 }}>
+              <div style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 600, color: '#5a4a30', marginTop: 3, letterSpacing: '0.04em' }}>
                 {d.sub}
               </div>
             </button>
@@ -168,7 +168,7 @@ export default function PreBattleScreen() {
               >
                 {step.n}
               </div>
-              <p style={{ fontFamily: 'IM Fell English, serif', fontSize: 12, lineHeight: 1.55, color: '#3a2a10' }}>
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: 13, lineHeight: 1.6, color: '#2a1a06' }}>
                 {step.text}
               </p>
             </div>
@@ -190,7 +190,7 @@ export default function PreBattleScreen() {
         <div className="space-y-1" style={{ fontFamily: 'IM Fell English, serif', fontSize: 12, color: '#3a2a10' }}>
           <p><strong>Large terrain:</strong> Cover · Obscuring · Unstable</p>
           <p><strong>Small terrain:</strong> Cover · Unstable</p>
-          <p style={{ fontSize: 11, color: '#5a4a30', marginTop: 6, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 12, color: '#3a2a10', marginTop: 6, lineHeight: 1.6 }}>
             Cover: −1 to hit rolls vs units behind/on terrain (unless charged or Fly)
             · Obscuring: blocks shooting (unless Fly)
             · Unstable: can't end moves on parts taller than 1"
