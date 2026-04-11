@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useGameStore, PHASES } from '../../store/gameStore'
+import { FACTION_THEMES } from '../../themes/factionThemes'
 import Modal from '../ui/Modal'
 import TwistDrawModal from './TwistDrawModal'
 import {
@@ -25,6 +26,15 @@ const PHASE_COLORS = {
   'end':         '#7060a0',
 }
 
+// Named objectives with short display names
+const OBJECTIVES = [
+  { id: 'dracothion', short: 'Draco',  full: 'Dracothion', position: 'Centre' },
+  { id: 'ignax',      short: 'Ignax',  full: 'Ignax',      position: 'Attacker Left' },
+  { id: 'behemat',    short: 'Behe',   full: 'Behemat',    position: 'Attacker Right' },
+  { id: 'vulcatrix',  short: 'Vulca',  full: 'Vulcatrix',  position: 'Defender Left' },
+  { id: 'nagendra',   short: 'Nagen',  full: 'Nagendra',   position: 'Defender Right' },
+]
+
 // Dark wood/leather center strip colors
 const C = {
   bg:       '#160c02',
@@ -43,6 +53,7 @@ export default function CenterStrip() {
     battleRound, currentPhaseIndex, activePlayerIndex, players,
     activeTwist, nextPhase, prevPhase, vp, resetGame,
     playerTurnsDoneThisRound, twistDrawPending, realm,
+    objectiveControl, cycleObjectiveControl,
   } = useGameStore()
 
   const [showTwist,    setShowTwist]    = useState(false)
@@ -63,6 +74,17 @@ export default function CenterStrip() {
     : 'Round End'
 
   const rounds = [1, 2, 3, 4]
+
+  // Underdog = player with fewer VPs (null if tied)
+  const underdogIndex = vp[0] < vp[1] ? 0 : vp[1] < vp[0] ? 1 : null
+
+  // Objective counts per player
+  const objCounts = [0, 1].map(pi =>
+    OBJECTIVES.filter(o => objectiveControl[o.id] === pi).length
+  )
+
+  // VP colors from faction themes
+  const playerVpColor = (i) => FACTION_THEMES[players[i]?.faction]?.primary ?? C.gold
 
   // Reusable button base style
   const cBtn = (extra = {}) => ({
@@ -96,7 +118,6 @@ export default function CenterStrip() {
           overflow: 'hidden',
         }}
       >
-        {/* Gold accent line */}
         <div style={{
           position: 'absolute', top: 0, left: '25%', right: '25%', height: 2,
           background: C.gold, boxShadow: `0 0 8px ${C.gold}80`, borderRadius: 2,
@@ -107,7 +128,6 @@ export default function CenterStrip() {
         <div style={{ fontFamily: 'Cinzel, serif', fontSize: 52, fontWeight: 900, color: C.gold, lineHeight: 1, textShadow: `0 0 20px ${C.gold}50`, marginTop: 2 }}>
           {battleRound}
         </div>
-        {/* Round pips */}
         <div className="flex justify-center gap-2 mt-2">
           {rounds.map(r => (
             <div key={r} style={{
@@ -236,6 +256,60 @@ export default function CenterStrip() {
         <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${C.goldDim}, transparent)` }} />
       </div>
 
+      {/* ── Objective control tracker ────────────────────────────────────────── */}
+      <div
+        className="w-full overflow-hidden"
+        style={{ background: C.panel, border: `1px solid ${C.goldFade}`, borderRadius: 10 }}
+      >
+        <div
+          className="flex items-center justify-center gap-1"
+          style={{ padding: '4px 8px', borderBottom: `1px solid ${C.textFaint}` }}
+        >
+          <span style={{ fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.22em', color: C.goldDim }}>
+            Objectives
+          </span>
+        </div>
+        {/* 3 + 2 grid */}
+        <div style={{ padding: '5px 5px 4px' }}>
+          <div className="flex gap-1 mb-1">
+            {OBJECTIVES.slice(0, 3).map(obj => (
+              <ObjButton
+                key={obj.id}
+                obj={obj}
+                owner={objectiveControl[obj.id]}
+                players={players}
+                onCycle={() => cycleObjectiveControl(obj.id)}
+              />
+            ))}
+          </div>
+          <div className="flex gap-1 justify-center">
+            {OBJECTIVES.slice(3).map(obj => (
+              <ObjButton
+                key={obj.id}
+                obj={obj}
+                owner={objectiveControl[obj.id]}
+                players={players}
+                onCycle={() => cycleObjectiveControl(obj.id)}
+              />
+            ))}
+          </div>
+        </div>
+        {/* Controlled count summary */}
+        <div className="flex" style={{ borderTop: `1px solid ${C.textFaint}` }}>
+          {players.map((p, i) => {
+            const col = playerVpColor(i)
+            return (
+              <div key={i} className="flex-1 text-center" style={{ padding: '3px 4px', borderRight: i === 0 ? `1px solid ${C.textFaint}` : 'none' }}>
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 900, color: objCounts[i] > 0 ? col : C.textFaint }}>
+                  {objCounts[i]}
+                </span>
+                <span style={{ fontSize: 7, color: C.textDim, marginLeft: 2 }}>obj</span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
       {/* ── VP scoreboard ───────────────────────────────────────────────────── */}
       <div
         className="w-full overflow-hidden"
@@ -251,13 +325,26 @@ export default function CenterStrip() {
           </span>
         </div>
         {players.map((p, i) => {
-          const factionColors = ['#B01818', '#4D9E4D', '#C9A84C']
-          const col = factionColors[i] ?? C.gold
+          const col = playerVpColor(i)
+          const isUnderdog = underdogIndex === i
           return (
-            <div key={i} className="flex items-center justify-between" style={{ padding: '6px 12px', borderTop: i > 0 ? `1px solid ${C.textFaint}` : 'none' }}>
-              <span style={{ fontFamily: 'Cinzel, serif', fontSize: 9, color: C.textDim, maxWidth: 68, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {p.name}
-              </span>
+            <div key={i} className="flex items-center justify-between" style={{ padding: '6px 10px', borderTop: i > 0 ? `1px solid ${C.textFaint}` : 'none' }}>
+              <div style={{ minWidth: 0 }}>
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 9, color: C.textDim, display: 'block', maxWidth: 68, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {p.name}
+                </span>
+                {isUnderdog && (
+                  <span style={{
+                    fontFamily: 'Cinzel, serif', fontSize: 7, fontWeight: 700,
+                    textTransform: 'uppercase', letterSpacing: '0.1em',
+                    color: '#6366f1', background: 'rgba(99,102,241,0.12)',
+                    border: '1px solid rgba(99,102,241,0.3)',
+                    padding: '0px 4px', borderRadius: 4, display: 'inline-block', marginTop: 1,
+                  }}>
+                    ⚑ Underdog
+                  </span>
+                )}
+              </div>
               <span style={{ fontFamily: 'Cinzel, serif', fontSize: 24, fontWeight: 900, color: col, lineHeight: 1 }}>
                 {vp[i]}
               </span>
@@ -305,6 +392,32 @@ export default function CenterStrip() {
           <div style={{ padding: 16, background: phaseColor + '13', border: `1px solid ${phaseColor}28`, borderRadius: 8 }}>
             <p style={{ color: '#e8e4d8', lineHeight: 1.6 }}>{currentPhase?.description}</p>
           </div>
+
+          {/* VP scoring assistant — only shown during End of Turn */}
+          {currentPhase?.id === 'end' && (
+            <div style={{ padding: 14, background: 'rgba(99,102,241,0.10)', border: '1px solid rgba(99,102,241,0.28)', borderRadius: 8 }}>
+              <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#818cf8', marginBottom: 8 }}>
+                VP Scoring Checklist
+              </div>
+              {players.map((_, i) => {
+                const col = playerVpColor(i)
+                const count = objCounts[i]
+                return (
+                  <div key={i} style={{ marginBottom: i === 0 ? 8 : 0, padding: '8px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: 6 }}>
+                    <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, color: col, marginBottom: 4 }}>{players[i].name}</div>
+                    <VpCheckRow label={`Controls 1+ objectives (has ${count})`} earned={count >= 1} />
+                    <VpCheckRow label={`Controls 2+ objectives (has ${count})`} earned={count >= 2} />
+                    <VpCheckRow label={`Controls more than opponent (${count} vs ${objCounts[1-i]})`} earned={count > objCounts[1-i]} />
+                    <VpCheckRow label="Completed a Battle Tactic" earned={null} />
+                  </div>
+                )
+              })}
+              <p style={{ fontSize: 9, color: '#666', marginTop: 8, lineHeight: 1.4 }}>
+                Remember to update objectives on the tracker before scoring.
+              </p>
+            </div>
+          )}
+
           <div className="space-y-1.5">
             <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#666', marginBottom: 8 }}>
               All Phases
@@ -353,6 +466,19 @@ export default function CenterStrip() {
                 : <LeafIcon  size={13} color="#2a8a2a" />}
               {activeTwist.realm === 'aqshy' ? 'Aqshy Twist' : 'Ghyran Twist'}
             </div>
+
+            {/* Underdog callout */}
+            {underdogIndex !== null && (
+              <div style={{ padding: '8px 12px', background: 'rgba(99,102,241,0.10)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 8 }}>
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, color: '#818cf8', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                  ⚑ Underdog:
+                </span>
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 10, color: '#a5b4fc', marginLeft: 6 }}>
+                  {players[underdogIndex]?.name} ({vp[underdogIndex]} VP vs {vp[1-underdogIndex]} VP)
+                </span>
+              </div>
+            )}
+
             <p style={{ color: '#e8e4d8', lineHeight: 1.6 }}>{activeTwist.effect}</p>
             {activeTwist.underdogBonus && (
               <div style={{ padding: 12, background: '#6366f115', border: '1px solid #6366f132', borderRadius: 8 }}>
@@ -411,6 +537,50 @@ export default function CenterStrip() {
         open={showTwistDraw}
         onClose={() => setShowTwistDraw(false)}
       />
+    </div>
+  )
+}
+
+// ── Objective button — cycles Neutral → P1 → P2 → Neutral ────────────────────
+function ObjButton({ obj, owner, players, onCycle }) {
+  const FACTION_THEMES_local = require('../../themes/factionThemes').FACTION_THEMES
+  const ownerColor = owner === null
+    ? '#3a2a10'
+    : FACTION_THEMES_local[players[owner]?.faction]?.primary ?? '#888'
+  const ownerBg = owner === null ? 'rgba(255,255,255,0.03)' : ownerColor + '18'
+  const ownerBorder = owner === null ? 'rgba(255,255,255,0.08)' : ownerColor + '50'
+  const ownerLabel = owner === null ? '—' : `P${owner + 1}`
+
+  return (
+    <button
+      onClick={onCycle}
+      className="flex-1 active:scale-90 transition-transform"
+      style={{
+        padding: '3px 2px', borderRadius: 6,
+        background: ownerBg,
+        border: `1px solid ${ownerBorder}`,
+        textAlign: 'center',
+        minWidth: 0,
+      }}
+    >
+      <div style={{ fontFamily: 'Cinzel, serif', fontSize: 7, fontWeight: 700, color: ownerColor, textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.2 }}>
+        {obj.short}
+      </div>
+      <div style={{ fontFamily: 'Cinzel, serif', fontSize: 8, fontWeight: 900, color: owner === null ? '#3a2a10' : ownerColor, lineHeight: 1 }}>
+        {ownerLabel}
+      </div>
+    </button>
+  )
+}
+
+// ── VP check row ──────────────────────────────────────────────────────────────
+function VpCheckRow({ label, earned }) {
+  const color = earned === null ? '#666' : earned ? '#10b981' : '#3a2a10'
+  const icon  = earned === null ? '○' : earned ? '✓' : '✕'
+  return (
+    <div className="flex items-start gap-1.5" style={{ marginBottom: 3 }}>
+      <span style={{ fontSize: 10, color, flexShrink: 0, lineHeight: 1.4 }}>{icon}</span>
+      <span style={{ fontSize: 10, color, lineHeight: 1.4 }}>{label}{earned === null ? ' (check manually)' : earned ? ' → +1 VP' : ''}</span>
     </div>
   )
 }

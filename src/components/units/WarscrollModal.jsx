@@ -37,9 +37,24 @@ function StatGem({ label, value, accentColor }) {
   )
 }
 
+// Weapon ability keyword glossary — shown as a reference below any weapon table that uses them
+const WEAPON_ABILITY_GLOSSARY = {
+  'Companion':         'This weapon cannot be enhanced by abilities that affect attacks (it acts independently of the unit\'s main weapons).',
+  'Shoot in Combat':   'This weapon can be used even while the unit is in combat (within ½" of an enemy). Most ranged weapons cannot shoot in combat.',
+  'Crit (Auto-wound)': 'An unmodified hit roll of 6 (a critical hit) automatically wounds — skip the wound roll.',
+  'Crit (Mortal)':     'An unmodified hit roll of 6 inflicts 1 mortal damage and the attack sequence ends (no wound or save roll).',
+  'Charge (+1 Damage)':'Add 1 to the Damage characteristic of this weapon if the attacking unit charged this turn.',
+}
+
 function WeaponTable({ weapons, title, accentColor }) {
   if (!weapons || weapons.length === 0) return null
   const isRanged = title === 'Ranged Weapons'
+
+  // Collect unique ability keywords present in this weapon table
+  const usedKeywords = Object.keys(WEAPON_ABILITY_GLOSSARY).filter(kw =>
+    weapons.some(w => w.ability && w.ability.includes(kw))
+  )
+
   return (
     <div className="rounded-lg overflow-hidden" style={{ border: `1px solid ${accentColor}28` }}>
       <div className="px-3 py-1.5 flex items-center gap-2" style={{ background: accentColor + '18' }}>
@@ -78,6 +93,22 @@ function WeaponTable({ weapons, title, accentColor }) {
           </tbody>
         </table>
       </div>
+
+      {/* Keyword glossary for any special abilities present */}
+      {usedKeywords.length > 0 && (
+        <div style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          {usedKeywords.map(kw => (
+            <div key={kw} className="flex gap-2 mb-1 last:mb-0">
+              <span style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, color: accentColor, flexShrink: 0 }}>
+                {kw}:
+              </span>
+              <span style={{ fontSize: 10, color: '#888', lineHeight: 1.4 }}>
+                {WEAPON_ABILITY_GLOSSARY[kw]}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

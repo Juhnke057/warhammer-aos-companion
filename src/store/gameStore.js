@@ -64,13 +64,13 @@ function buildUnitStates(faction, variant) {
 // ── phases ────────────────────────────────────────────────────────────────────
 
 export const PHASES = [
-  { id: 'round-start', label: 'Start of Round', icon: '⚔️', description: 'Priority roll → Determine underdog → Draw twist card → Draw battle tactic cards → Start of Battle Round abilities' },
-  { id: 'hero', label: 'Hero Phase', icon: '🏰', description: 'Use Hero Phase abilities. Wizards cast spells. Priests chant prayers.' },
-  { id: 'movement', label: 'Movement Phase', icon: '👟', description: 'Normal Move, Run, or Retreat with your units. Flying units ignore terrain and combat ranges.' },
-  { id: 'shooting', label: 'Shooting Phase', icon: '🏹', description: 'Units not in combat can shoot. Pick targets — must be visible and within range.' },
-  { id: 'charge', label: 'Charge Phase', icon: '💥', description: 'Pick a unit not in combat that has not Run or Retreated. Roll 2D6 — must end within ½" of an enemy unit.' },
-  { id: 'combat', label: 'Combat Phase', icon: '⚡', description: 'Use non-Fight Combat Phase abilities first. Then alternate picking units to Fight, starting with the active player. Each unit in combat MUST fight.' },
-  { id: 'end', label: 'End of Turn', icon: '🏁', description: 'Use End of Turn abilities → Determine objective control → Score VPs: 1 VP if you control 1+ objectives · 1 VP if you control 2+ objectives · 1 VP if you control more objectives than your opponent · 1 VP per completed Battle Tactic.' },
+  { id: 'round-start', label: 'Start of Round', icon: '⚔️', description: 'Both players roll off for priority — the winner chooses who takes the first turn (or second). The player with fewer VPs is the Underdog (roll off if tied). Draw and resolve the Twist Card together. Use any Start of Battle Round abilities.' },
+  { id: 'hero', label: 'Hero Phase', icon: '🏰', description: 'Use Hero Phase abilities. Wizards cast spells (casting roll 2D6, target number varies). Priests chant prayers. Heroes can use their named abilities.' },
+  { id: 'movement', label: 'Movement Phase', icon: '👟', description: 'Each unit can: Normal Move (up to Move value) · Run (roll D6, add to Move — cannot Shoot or Charge after) · Retreat (leave combat — roll D6 mortal damage, cannot Charge after). Units with Fly ignore terrain height and can move over other units.' },
+  { id: 'shooting', label: 'Shooting Phase', icon: '🏹', description: 'Units not in combat (within ½" of enemy) can shoot. Targets must be visible and within range. Units that Ran this turn cannot shoot. Units in cover (behind terrain) subtract 1 from hit rolls against them.' },
+  { id: 'charge', label: 'Charge Phase', icon: '💥', description: 'Pick a unit not in combat that has not Run or Retreated this turn. Roll 2D6 for the charge roll — the unit must be able to end its move within ½" of an enemy unit and the distance to that unit must be equal to or less than the charge roll.' },
+  { id: 'combat', label: 'Combat Phase', icon: '⚡', description: 'Use non-Fight Combat Phase abilities first. Then both players alternate choosing a unit to Fight, starting with the active player. IMPORTANT: every unit within ½" of an enemy MUST fight before the phase ends — you cannot skip them. Strike-First units fight before all others. Strike-Last units fight after all others.' },
+  { id: 'end', label: 'End of Turn', icon: '🏁', description: 'Use End of Turn abilities → Score VPs: 1 VP if you control 1+ objectives · 1 VP if you control 2+ objectives · 1 VP if you control more objectives than your opponent · 1 VP per completed Battle Tactic. Then check if all 4 battle rounds are complete — if so, the game ends.' },
 ]
 
 // ── default state ─────────────────────────────────────────────────────────────
@@ -120,6 +120,9 @@ const initialState = {
 
   // Unit states: { [playerId-unitId]: { damagePoints, destroyed, reinforced, inReserve, statusEffects } }
   unitStates: {},
+
+  // Objective control: { objId: null | 0 | 1 } — null = neutral, 0 = player 0, 1 = player 1
+  objectiveControl: { dracothion: null, ignax: null, behemat: null, vulcatrix: null, nagendra: null },
 
   // FEC Noble Deeds tracking: { 'playerIndex-unitId': pointsNumber }
   nobleDeedsPoints: {},
@@ -246,6 +249,7 @@ export const useGameStore = create(
           usedBattleTraits: {},
           usedAbilitiesThisTurn: {},
           usedAbilitiesThisBattle: {},
+          objectiveControl: { dracothion: null, ignax: null, behemat: null, vulcatrix: null, nagendra: null },
         })
       },
 
@@ -526,6 +530,37 @@ export const useGameStore = create(
         }))
       },
 
+      // ── Objective Control ────────────────────────────────────────────────────
+
+      // owner: null = neutral, 0 = player 0, 1 = player 1
+      setObjectiveControl(objId, owner) {
+        set(s => ({ objectiveControl: { ...s.objectiveControl, [objId]: owner } }))
+      },
+
+      // Cycle neutral → player 0 → player 1 → neutral
+      cycleObjectiveControl(objId) {
+        set(s => {
+          const cur = s.objectiveControl[objId]
+          const next = cur === null ? 0 : cur === 0 ? 1 : null
+          return { objectiveControl: { ...s.objectiveControl, [objId]: next } }
+        })
+      },
+
+      // ── Lurking Vermintide ───────────────────────────────────────────────────
+
+      // Destroy all units still in reserve for a player (Vermintide deadline)
+      destroyReserveUnits(playerIndex) {
+        set(s => {
+          const newUnitStates = { ...s.unitStates }
+          for (const [key, state] of Object.entries(newUnitStates)) {
+            if (key.startsWith(`${playerIndex}-`) && state.inReserve) {
+              newUnitStates[key] = { ...state, inReserve: false, destroyed: true }
+            }
+          }
+          return { unitStates: newUnitStates }
+        })
+      },
+
       // ── Unit Tokens ──────────────────────────────────────────────────────────
 
       toggleUnitToken(playerIndex, unitId, tokenName) {
@@ -547,8 +582,9 @@ export const useGameStore = create(
       resetGame() {
         set({
           ...initialState,
-          theme: get().theme, // preserve theme preference
-          players: get().players, // preserve player names/factions
+          theme: get().theme,
+          players: get().players,
+          objectiveControl: { dracothion: null, ignax: null, behemat: null, vulcatrix: null, nagendra: null },
         })
       },
 
@@ -581,6 +617,7 @@ export const useGameStore = create(
         usedBattleTraits: state.usedBattleTraits,
         usedAbilitiesThisTurn: state.usedAbilitiesThisTurn,
         usedAbilitiesThisBattle: state.usedAbilitiesThisBattle,
+        objectiveControl: state.objectiveControl,
       }),
     }
   )

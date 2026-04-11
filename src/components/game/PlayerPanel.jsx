@@ -144,6 +144,7 @@ export default function PlayerPanel({ playerIndex }) {
   const {
     players, vp, addVP, removeVP, activePlayerIndex,
     battleRound, unitStates, usedBattleTraits, toggleBattleTrait,
+    destroyReserveUnits,
   } = useGameStore()
   const [selectedUnit, setSelectedUnit] = useState(null)
   const [showTactics, setShowTactics]   = useState(false)
@@ -295,13 +296,34 @@ export default function PlayerPanel({ playerIndex }) {
           getAllUnits(player.faction, player.armyVariant).some(
             u => unitStates[`${playerIndex}-${u.id}`]?.inReserve
           ) && (
-          <div className="flex-shrink-0 px-4 py-2" style={{ background: 'rgba(239,68,68,0.08)', borderBottom: '1px solid rgba(239,68,68,0.22)' }}>
+          <div className="flex-shrink-0 px-3 py-2" style={{ background: 'rgba(239,68,68,0.08)', borderBottom: '1px solid rgba(239,68,68,0.22)' }}>
             <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, color: '#cc2222', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
               ⚠ Lurking Vermintide Deadline!
             </div>
             <div style={{ fontSize: 10, color: '#884444', marginTop: 2, lineHeight: 1.4 }}>
-              Units still in tunnels must use Gnawhole Ambush or be destroyed at end of Round 3.
+              {battleRound === 3
+                ? 'Units still in tunnels must use Gnawhole Ambush this round or be destroyed at end of Round 3.'
+                : 'Round 3 has passed — units still in reserve should have been destroyed.'}
             </div>
+            {battleRound >= 4 && (
+              <button
+                onClick={() => {
+                  if (window.confirm('Mark all reserve units as destroyed? (Lurking Vermintide deadline passed)'))
+                    destroyReserveUnits(playerIndex)
+                }}
+                className="mt-2 w-full py-1.5 active:scale-95 transition-transform"
+                style={{
+                  fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700,
+                  textTransform: 'uppercase', letterSpacing: '0.1em',
+                  background: 'rgba(176,24,24,0.12)',
+                  color: '#cc2222',
+                  border: '1px solid rgba(176,24,24,0.3)',
+                  borderRadius: 6,
+                }}
+              >
+                ✕ Destroy Reserve Units
+              </button>
+            )}
           </div>
         )}
 

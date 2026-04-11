@@ -90,6 +90,18 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
   const isSwarm     = unit.health === 1 && (unit.count ?? 1) > 1
   const modelsAlive = isSwarm ? Math.max(0, (unit.count ?? 1) - damagePoints) : null
 
+  // Total control score = per-model value × models currently alive
+  const modelsCount   = unit.count ?? 1
+  const modelsAliveFull = modelsCount > 1
+    ? Math.max(0, Math.ceil((totalHealth - damagePoints) / unit.health))
+    : 1
+  const totalControl = unit.control * modelsAliveFull
+
+  // Whether any weapon has Charge (+1 Damage) and unit has Charged status
+  const hasCharged      = statusEffects.some(e => e.id === 'charged')
+  const hasChargeWeapon = [...(unit.meleeWeapons ?? []), ...(unit.rangedWeapons ?? [])]
+    .some(w => w.ability?.includes('Charge'))
+
   const hasCorneredRat = unit.id === 'clawlord' && damagePoints > 0
   const keywordWard    = unit.wardValue ? unit.wardValue : null
 
@@ -181,7 +193,7 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
                 <StatPill icon={<MoveIcon size={10} />} label={`${unit.move}"`} />
                 <StatPill icon={<HealthIcon size={10} />} label={unit.health} />
                 <StatPill icon={<ShieldIcon size={10} />} label={`${unit.save}+`} />
-                <StatPill icon={<ControlIcon size={10} />} label={unit.control} />
+                <StatPill icon={<ControlIcon size={10} />} label={totalControl} />
                 {keywordWard && (
                   <StatPill
                     icon={<WardIcon size={10} color="#4f86c6" />}
@@ -331,6 +343,40 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
                 <SkullIcon size={16} color="#aa2222" />
               </button>
             </div>
+
+            {/* Ward save reminder */}
+            {keywordWard && (
+              <div
+                className="flex items-center gap-1.5 mt-1.5 px-2 py-1"
+                style={{
+                  background: 'rgba(79,134,198,0.08)',
+                  border: '1px solid rgba(79,134,198,0.22)',
+                  borderRadius: 6,
+                }}
+              >
+                <WardIcon size={10} color="#4f86c6" />
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, color: '#4f86c6' }}>
+                  Ward ({keywordWard}+) — remember to roll for each damage point
+                </span>
+              </div>
+            )}
+
+            {/* Charge (+1 Damage) reminder */}
+            {hasCharged && hasChargeWeapon && (
+              <div
+                className="flex items-center gap-1.5 mt-1 px-2 py-1"
+                style={{
+                  background: 'rgba(249,115,22,0.08)',
+                  border: '1px solid rgba(249,115,22,0.28)',
+                  borderRadius: 6,
+                }}
+              >
+                <LightningIcon size={10} color="#f97316" />
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, color: '#f97316' }}>
+                  Charged — Charge (+1 Damage) weapons are active this turn
+                </span>
+              </div>
+            )}
 
             {/* Gryph-crow token */}
             {unit.id === 'lord-veritant' && (
