@@ -37,7 +37,7 @@ export default function Modal({ open, onClose, title, children, accentColor = '#
             borderBottom: `1px solid ${accentColor}25`,
           }}
         >
-          <h2 className="text-base font-bold font-display tracking-wide" style={{ color: accentColor }}>
+          <h2 className="font-bold font-display tracking-wide" style={{ color: accentColor, fontSize: 18 }}>
             {title}
           </h2>
           <button
