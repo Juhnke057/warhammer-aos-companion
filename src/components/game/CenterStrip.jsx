@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Browser } from '@capacitor/browser'
+import { Filesystem, Directory } from '@capacitor/filesystem'
+import { FileOpener } from '@capacitor-community/file-opener'
 import { useGameStore, PHASES, getArmyData, getAllUnits } from '../../store/gameStore'
 import { FACTION_THEMES } from '../../themes/factionThemes'
 import Modal from '../ui/Modal'
@@ -12,13 +13,30 @@ import {
 const isNative = () => !!(window.Capacitor?.isNativePlatform?.())
 
 async function openPdf(file) {
-  const url = isNative()
-    ? `http://localhost/pdfs/${file}`
-    : `/pdfs/${file}`
-  if (isNative()) {
-    await Browser.open({ url })
-  } else {
-    window.open(url, '_blank')
+  if (!isNative()) {
+    window.open(`/pdfs/${file}`, '_blank')
+    return
+  }
+  try {
+    // Fetch from Capacitor's local server — works within the WebView
+    const response = await fetch(`http://localhost/pdfs/${file}`)
+    const buffer   = await response.arrayBuffer()
+    const bytes    = new Uint8Array(buffer)
+    let binary = ''
+    for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i])
+    const base64 = btoa(binary)
+
+    // Write to device cache so a native app can open it
+    const written = await Filesystem.writeFile({
+      path: file,
+      data: base64,
+      directory: Directory.Cache,
+    })
+
+    // Open with the device's default PDF viewer
+    await FileOpener.open({ filePath: written.uri, contentType: 'application/pdf' })
+  } catch (e) {
+    alert(`Could not open PDF: ${e?.message ?? e}`)
   }
 }
 
