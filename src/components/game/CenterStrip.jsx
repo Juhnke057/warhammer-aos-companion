@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useGameStore, PHASES } from '../../store/gameStore'
+import { Browser } from '@capacitor/browser'
+import { useGameStore, PHASES, getArmyData, getAllUnits } from '../../store/gameStore'
 import { FACTION_THEMES } from '../../themes/factionThemes'
 import Modal from '../ui/Modal'
 import TwistDrawModal from './TwistDrawModal'
@@ -7,6 +8,19 @@ import {
   PHASE_ICONS, FlameIcon, LeafIcon, BookIcon, StarIcon,
   TwistIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon,
 } from '../ui/AosIcons'
+
+const isNative = () => !!(window.Capacitor?.isNativePlatform?.())
+
+async function openPdf(file) {
+  const url = isNative()
+    ? `http://localhost/pdfs/${file}`
+    : `/pdfs/${file}`
+  if (isNative()) {
+    await Browser.open({ url })
+  } else {
+    window.open(url, '_blank')
+  }
+}
 
 const PDF_FILES = [
   { label: 'Core Rules',         file: 'core-rules.pdf' },
@@ -51,15 +65,17 @@ const C = {
 export default function CenterStrip() {
   const {
     battleRound, currentPhaseIndex, activePlayerIndex, players,
-    activeTwist, nextPhase, prevPhase, vp, resetGame,
+    activeTwist, activeTwistOptionId, setTwistOptionId,
+    nextPhase, prevPhase, vp, addVP, resetGame,
     playerTurnsDoneThisRound, twistDrawPending, realm,
-    objectiveControl, cycleObjectiveControl,
+    objectiveControl, cycleObjectiveControl, addStatusEffect,
   } = useGameStore()
 
-  const [showTwist,    setShowTwist]    = useState(false)
-  const [showPhaseHelp,setShowPhaseHelp]= useState(false)
-  const [showPdfs,     setShowPdfs]     = useState(false)
-  const [showTwistDraw,setShowTwistDraw]= useState(false)
+  const [showTwist,       setShowTwist]       = useState(false)
+  const [showPhaseHelp,   setShowPhaseHelp]   = useState(false)
+  const [showPdfs,        setShowPdfs]        = useState(false)
+  const [showTwistDraw,   setShowTwistDraw]   = useState(false)
+  const [applyingStatus,  setApplyingStatus]  = useState(null) // { effect } — unit picker open
 
   const realmColor = realm === 'aqshy' ? '#cc3030' : '#2a8a2a'
   const RealmIcon  = realm === 'aqshy' ? FlameIcon  : LeafIcon
@@ -98,7 +114,7 @@ export default function CenterStrip() {
 
   return (
     <div
-      className="panel-texture flex-shrink-0 flex flex-col items-center gap-2 py-2 px-3"
+      className="panel-texture panel-scroll flex-shrink-0 flex flex-col items-center gap-2 py-2 px-3"
       style={{
         width: 440,
         background: C.bg,
@@ -399,23 +415,40 @@ export default function CenterStrip() {
           {currentPhase?.id === 'end' && (
             <div style={{ padding: 14, background: 'rgba(99,102,241,0.10)', border: '1px solid rgba(99,102,241,0.28)', borderRadius: 8 }}>
               <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#818cf8', marginBottom: 8 }}>
-                VP Scoring Checklist
+                VP Scoring — {players[activePlayerIndex]?.name}
               </div>
-              {players.map((_, i) => {
+              {(() => {
+                const i = activePlayerIndex
                 const col = playerVpColor(i)
                 const count = objCounts[i]
+                const opp   = objCounts[1 - i]
+                const earned = (count >= 1 ? 1 : 0) + (count >= 2 ? 1 : 0) + (count > opp ? 1 : 0)
                 return (
-                  <div key={i} style={{ marginBottom: i === 0 ? 8 : 0, padding: '8px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: 6 }}>
-                    <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, color: col, marginBottom: 4 }}>{players[i].name}</div>
-                    <VpCheckRow label={`Controls 1+ objectives (has ${count})`} earned={count >= 1} />
-                    <VpCheckRow label={`Controls 2+ objectives (has ${count})`} earned={count >= 2} />
-                    <VpCheckRow label={`Controls more than opponent (${count} vs ${objCounts[1-i]})`} earned={count > objCounts[1-i]} />
-                    <VpCheckRow label="Completed a Battle Tactic" earned={null} />
+                  <div style={{ padding: '8px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: 6 }}>
+                    <VpCheckRow label={`Controls 1+ objectives (has ${count})`}          earned={count >= 1} />
+                    <VpCheckRow label={`Controls 2+ objectives (has ${count})`}          earned={count >= 2} />
+                    <VpCheckRow label={`Controls more than opponent (${count} vs ${opp})`} earned={count > opp} />
+                    <VpCheckRow label="Completed a Battle Tactic (check Tactics panel)"  earned={null} />
+                    {earned > 0 && (
+                      <button
+                        onClick={() => addVP(i, earned)}
+                        className="w-full mt-3 py-2.5 active:scale-95 transition-transform"
+                        style={{
+                          background: col + '20', border: `1px solid ${col}50`, borderRadius: 8,
+                          fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700, color: col,
+                        }}
+                      >
+                        + Award {earned} VP to {players[i].name}
+                      </button>
+                    )}
+                    {earned === 0 && (
+                      <p style={{ fontSize: 10, color: '#555', marginTop: 6, textAlign: 'center' }}>No objective VPs earned this turn.</p>
+                    )}
                   </div>
                 )
-              })}
-              <p style={{ fontSize: 9, color: '#666', marginTop: 8, lineHeight: 1.4 }}>
-                Remember to update objectives on the tracker before scoring.
+              })()}
+              <p style={{ fontSize: 9, color: '#555', marginTop: 8, lineHeight: 1.4 }}>
+                Update the objective tracker first, then tap Award VP.
               </p>
             </div>
           )}
@@ -456,7 +489,7 @@ export default function CenterStrip() {
       {/* ── Twist card detail modal ──────────────────────────────────────────── */}
       <Modal
         open={showTwist}
-        onClose={() => setShowTwist(false)}
+        onClose={() => { setShowTwist(false); setApplyingStatus(null) }}
         title={activeTwist?.name ?? 'Twist Card'}
         accentColor={activeTwist?.realm === 'aqshy' ? '#cc3030' : '#2a8a2a'}
       >
@@ -492,18 +525,113 @@ export default function CenterStrip() {
             )}
             {activeTwist.options && (
               <div className="space-y-2">
-                <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Pick one:</div>
-                {activeTwist.options.map(opt => (
-                  <div key={opt.id} style={{ padding: 12, background: '#ffffff07', borderRadius: 8 }}>
-                    <div style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 12, color: 'white', marginBottom: 4 }}>{opt.name}</div>
-                    <p style={{ color: '#ccc', fontSize: 12, lineHeight: 1.5 }}>{opt.description}</p>
-                  </div>
-                ))}
+                <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>
+                  Pick one:
+                  {activeTwistOptionId && <span style={{ color: '#10b981', marginLeft: 8 }}>✓ Selected</span>}
+                </div>
+                {activeTwist.options.map(opt => {
+                  const isSelected = activeTwistOptionId === opt.id
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => setTwistOptionId(isSelected ? null : opt.id)}
+                      className="w-full text-left active:scale-98 transition-transform"
+                      style={{
+                        padding: 12, borderRadius: 8,
+                        background: isSelected ? 'rgba(16,185,129,0.12)' : '#ffffff07',
+                        border: `1px solid ${isSelected ? 'rgba(16,185,129,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                      }}
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 12, color: isSelected ? '#10b981' : 'white' }}>
+                          {isSelected ? '✓ ' : ''}{opt.name}
+                        </div>
+                        {!isSelected && (
+                          <span style={{ fontSize: 10, color: '#555', fontFamily: 'Cinzel, serif' }}>Tap to select</span>
+                        )}
+                      </div>
+                      <p style={{ color: isSelected ? '#6ee7b7' : '#ccc', fontSize: 12, lineHeight: 1.5 }}>{opt.description}</p>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* ── Status effect quick-apply ── */}
+            {activeTwist.statusEffects?.length > 0 && (
+              <div>
+                <div style={{ fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>
+                  Apply Status to Unit
+                </div>
+                <div className="space-y-1.5">
+                  {activeTwist.statusEffects.map(eff => (
+                    <button
+                      key={eff.id}
+                      onClick={() => setApplyingStatus(eff)}
+                      className="w-full flex items-center justify-between gap-3 px-3 py-2.5 active:scale-98 transition-transform"
+                      style={{ background: '#ffffff08', border: '1px solid #ffffff15', borderRadius: 8, textAlign: 'left' }}
+                    >
+                      <div>
+                        <div style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 12, color: 'white' }}>{eff.name}</div>
+                        <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>{eff.description}</div>
+                      </div>
+                      <ChevronRightIcon size={13} color="#555" style={{ flexShrink: 0 }} />
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
         )}
       </Modal>
+
+      {/* ── Twist status unit picker ─────────────────────────────────────────── */}
+      {applyingStatus && (
+        <Modal
+          open={true}
+          onClose={() => setApplyingStatus(null)}
+          title={`Apply: ${applyingStatus.name}`}
+          accentColor="#6366f1"
+        >
+          <div className="space-y-4">
+            <div style={{ padding: '8px 12px', background: 'rgba(99,102,241,0.10)', border: '1px solid rgba(99,102,241,0.28)', borderRadius: 8 }}>
+              <p style={{ fontSize: 12, color: '#a5b4fc', lineHeight: 1.5 }}>{applyingStatus.description}</p>
+            </div>
+            <p style={{ fontSize: 13, color: '#888' }}>Which unit should receive this status?</p>
+            {players.map((player, pi) => {
+              const pUnits = getAllUnits(player.faction, player.armyVariant)
+              return (
+                <div key={pi}>
+                  <div style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: pi === 0 ? '#C9A84C' : '#4D9E4D', marginBottom: 6 }}>
+                    {player.name}
+                  </div>
+                  <div className="space-y-1.5">
+                    {pUnits.map(u => (
+                      <button
+                        key={u.id}
+                        onClick={() => {
+                          addStatusEffect(pi, u.id, { ...applyingStatus, expiresAt: 'end-of-round' })
+                          setApplyingStatus(null)
+                        }}
+                        className="w-full text-left px-3 py-2.5 rounded-lg active:scale-95 transition-transform"
+                        style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)' }}
+                      >
+                        <span style={{ fontSize: 13, color: 'white', fontWeight: 700 }}>{u.name}</span>
+                        {u.keywords?.includes('Hero') && (
+                          <span style={{ marginLeft: 8, fontSize: 11, color: '#f59e0b' }}>Hero</span>
+                        )}
+                        {u.count > 1 && (
+                          <span style={{ marginLeft: 6, fontSize: 11, color: '#666' }}>×{u.count}</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </Modal>
+      )}
 
       {/* ── PDF modal ───────────────────────────────────────────────────────── */}
       <Modal
@@ -516,7 +644,7 @@ export default function CenterStrip() {
           {PDF_FILES.map(pdf => (
             <button
               key={pdf.file}
-              onClick={() => window.open(`/pdfs/${pdf.file}`, '_blank')}
+              onClick={() => openPdf(pdf.file)}
               className="w-full flex items-center gap-3 p-4 text-left active:scale-98 transition-transform"
               style={{ background: '#ffffff07', border: '1px solid #ffffff12', borderRadius: 8 }}
             >

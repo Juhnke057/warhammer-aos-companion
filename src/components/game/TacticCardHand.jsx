@@ -4,7 +4,7 @@ import { BATTLE_TACTICS } from '../../data/cards'
 import Modal from '../ui/Modal'
 
 export default function TacticCardHand({ playerIndex, isDark }) {
-  const { playerHands, discardTactic, addVP } = useGameStore()
+  const { playerHands, discardTactic, addVP, usedTacticCommands, toggleTacticCommandUsed } = useGameStore()
   const [selectedCard, setSelectedCard] = useState(null)
   const [confirmComplete, setConfirmComplete] = useState(false)
 
@@ -69,13 +69,35 @@ export default function TacticCardHand({ playerIndex, isDark }) {
             </div>
 
             {/* Command ability */}
-            <div className="rounded-lg p-4" style={{ background: '#f59e0b15', border: '1px solid #f59e0b40' }}>
-              <div className="text-xs font-bold text-yellow-500 uppercase tracking-wider mb-1">
-                ⚡ Command — {selectedCard.command.timing}
-              </div>
-              <div className="font-bold text-white mb-2">{selectedCard.command.name}</div>
-              <p className="text-gray-300 text-sm leading-relaxed">{selectedCard.command.effect}</p>
-            </div>
+            {(() => {
+              const cmdUsed = !!usedTacticCommands[`${playerIndex}-${selectedCard.id}`]
+              return (
+                <div className="rounded-lg overflow-hidden" style={{ border: `1px solid ${cmdUsed ? 'rgba(255,255,255,0.08)' : '#f59e0b40'}`, opacity: cmdUsed ? 0.6 : 1 }}>
+                  <div className="px-4 py-2 flex items-center justify-between gap-2" style={{ background: cmdUsed ? 'rgba(255,255,255,0.04)' : '#f59e0b15' }}>
+                    <div>
+                      <div className="text-xs font-bold uppercase tracking-wider mb-0.5" style={{ color: cmdUsed ? '#555' : '#f59e0b' }}>
+                        ⚡ Command — {selectedCard.command.timing}
+                      </div>
+                      <div className="font-bold" style={{ color: cmdUsed ? '#555' : 'white' }}>{selectedCard.command.name}</div>
+                    </div>
+                    <button
+                      onClick={() => toggleTacticCommandUsed(playerIndex, selectedCard.id)}
+                      className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold active:scale-95 transition-transform"
+                      style={{
+                        background: cmdUsed ? 'rgba(255,255,255,0.06)' : '#f59e0b25',
+                        color: cmdUsed ? '#555' : '#f59e0b',
+                        border: `1px solid ${cmdUsed ? 'rgba(255,255,255,0.08)' : '#f59e0b40'}`,
+                      }}
+                    >
+                      {cmdUsed ? 'Mark Unused' : 'Mark Used'}
+                    </button>
+                  </div>
+                  <div className="px-4 py-2.5">
+                    <p className="text-sm leading-relaxed" style={{ color: cmdUsed ? '#555' : '#d1d5db' }}>{selectedCard.command.effect}</p>
+                  </div>
+                </div>
+              )
+            })()}
 
             {/* Confirm complete */}
             {confirmComplete ? (

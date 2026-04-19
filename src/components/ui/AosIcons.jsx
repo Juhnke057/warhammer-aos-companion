@@ -22,29 +22,32 @@ function Svg({ size, color, className, children }) {
 
 // ── Stat icons ────────────────────────────────────────────────────────────────
 
-/** Move stat — diagonal speed arrow */
+/** Move stat — boot/foot */
 export function MoveIcon({ size = 16, color, className }) {
   return (
     <Svg size={size} color={color} className={className}>
-      <path d="M5 19L19 5M19 5h-6M19 5v6" />
+      <path d="M8 4v10l3.5 3H20V15h-7l-3-2V4H8Z" />
+      <path d="M6 17H3v2h16v-2" />
     </Svg>
   )
 }
 
-/** Health / Wounds — blood drop */
+/** Health / Wounds — heart */
 export function HealthIcon({ size = 16, color, className }) {
   return (
     <Svg size={size} color={color} className={className}>
-      <path d="M12 4C10 4 6 8 6 13a6 6 0 0 0 12 0C18 8 14 4 12 4Z" />
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
     </Svg>
   )
 }
 
-/** Save — kite shield */
+/** Save — armour / breastplate */
 export function ShieldIcon({ size = 16, color, className }) {
   return (
     <Svg size={size} color={color} className={className}>
-      <path d="M12 3L4 7v5c0 5.3 4.3 8.7 8 10 3.7-1.3 8-4.7 8-10V7L12 3Z" />
+      <path d="M5 4h14v3H5Z" />
+      <path d="M6 7C6 12 8.5 17 12 19C15.5 17 18 12 18 7H6Z" />
+      <path d="M9 11h6M8 14h8" />
     </Svg>
   )
 }

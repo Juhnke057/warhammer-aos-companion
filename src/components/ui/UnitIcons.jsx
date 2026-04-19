@@ -16,182 +16,183 @@ export function SvgDefs() {
 
         {/* ── FEC ────────────────────────────────────────────────────────── */}
 
-        {/* Abhorrant Archregent — crowned vampire with bat wings spread */}
+        {/* Abhorrant Archregent — bat silhouette, wings spread */}
         <symbol id="unit-icon-abhorrant-archregent" viewBox="0 0 24 24">
-          <path d="M12 7 C11 7 10 8 10 9.5 C10 11 11 12 12 12 C13 12 14 11 14 9.5 C14 8 13 7 12 7Z" fill="currentColor"/>
-          <path d="M12 12 L10 18 L12 20 L14 18 Z" fill="currentColor"/>
-          <path d="M10 13 L7 15 L5 14 L4 11 L6 9 L8 10Z" fill="currentColor" opacity="0.8"/>
-          <path d="M14 13 L17 15 L19 14 L20 11 L18 9 L16 10Z" fill="currentColor" opacity="0.8"/>
-          <path d="M9 7 L10 5 L12 4 L14 5 L15 7" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          <path d="M10 5 L10 3 M12 4 L12 2 M14 5 L14 3" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+          <ellipse cx="12" cy="14" rx="2.5" ry="3" fill="currentColor"/>
+          <path d="M10 13L3 9L2 13L6 16L10 15Z" fill="currentColor"/>
+          <path d="M14 13L21 9L22 13L18 16L14 15Z" fill="currentColor"/>
+          <path d="M10.5 11.5L9 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M13.5 11.5L15 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         </symbol>
 
-        {/* Varghulf Courtier — bestial hunched bat-beast with claws */}
+        {/* Varghulf Courtier — wolf profile, ears and tail */}
         <symbol id="unit-icon-varghulf-courtier" viewBox="0 0 24 24">
-          <path d="M12 11 C9 11 7 13 7 15 C7 17 9 19 12 19 C15 19 17 17 17 15 C17 13 15 11 12 11Z" fill="currentColor"/>
-          <path d="M7 15 L3 12 L2 9 L5 8 L7 11Z" fill="currentColor" opacity="0.75"/>
-          <path d="M17 15 L21 12 L22 9 L19 8 L17 11Z" fill="currentColor" opacity="0.75"/>
-          <path d="M9 11 L7 7 L9 5 L11 8Z" fill="currentColor" opacity="0.6"/>
-          <path d="M15 11 L17 7 L15 5 L13 8Z" fill="currentColor" opacity="0.6"/>
-          <circle cx="10" cy="14" r="1.2" fill="white" opacity="0.9"/>
-          <circle cx="14" cy="14" r="1.2" fill="white" opacity="0.9"/>
-          <path d="M6 19 L5 22 M10 20 L10 22 M14 20 L14 22 M18 19 L19 22" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+          <path d="M8 13C8 11 10 9 13 9C16 9 19 11 19 14C19 16 17 18 14 18L8 18C6 18 5 16 8 13Z" fill="currentColor" opacity="0.85"/>
+          <circle cx="6" cy="13" r="3.5" fill="currentColor"/>
+          <path d="M3 14.5L2 16.5L5 16Z" fill="currentColor"/>
+          <path d="M5 10.5L4 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M7.5 10L8.5 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M9 18L8 22M12 18.5L12 22M15 18L15 22M18 17.5L19 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <path d="M19 13C21 11 22 9 21 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
         </symbol>
 
-        {/* Cryptguard — armored skeleton with spear and kite shield */}
+        {/* Cryptguard — ghoul, hunched body with claw arms */}
         <symbol id="unit-icon-cryptguard" viewBox="0 0 24 24">
-          <rect x="11" y="3" width="2" height="14" rx="1" fill="currentColor"/>
-          <path d="M11 3 L12 1 L13 3Z" fill="currentColor"/>
-          <path d="M5 8 L5 16 L8.5 20 L12 16 L12 8 Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-          <path d="M5 12 L12 12" stroke="currentColor" strokeWidth="1" opacity="0.5"/>
-          <path d="M8.5 8 L8.5 20" stroke="currentColor" strokeWidth="0.8" opacity="0.4"/>
-          <circle cx="17" cy="7" r="3" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-          <path d="M15 7 L19 7 M17 5 L17 9" stroke="currentColor" strokeWidth="1" opacity="0.6"/>
+          <circle cx="12" cy="8" r="3.5" fill="currentColor"/>
+          <path d="M8 11C6 13 5 17 6 20H18C19 17 18 13 16 11C15 10 13 11 12 11C11 11 9 10 8 11Z" fill="currentColor" opacity="0.85"/>
+          <path d="M9.5 10.5L8 13L12 12L16 13L14.5 10.5" fill="currentColor" opacity="0.7"/>
+          <path d="M7 12L3 16L4 17.5L7 14.5Z" fill="currentColor"/>
+          <path d="M17 12L21 16L20 17.5L17 14.5Z" fill="currentColor"/>
+          <path d="M3 16L2 19M4 17.5L3 20.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          <path d="M21 16L22 19M20 17.5L21 20.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
         </symbol>
 
-        {/* Morbheg Knights — undead cavalry with lance couched */}
+        {/* Morbheg Knights — knight riding a horse */}
         <symbol id="unit-icon-morbheg-knights" viewBox="0 0 24 24">
-          <ellipse cx="11" cy="15" rx="7" ry="3.5" fill="currentColor" opacity="0.85"/>
-          <path d="M4 15 L3 19 M7 17 L7 21 M15 17 L15 21 M18 15 L19 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          <circle cx="11" cy="9" r="3" fill="currentColor"/>
-          <path d="M11 8 L9 6 L8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          <path d="M14 10 L20 6 L22 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          <path d="M20 6 L21 8 L22 5 L19 5Z" fill="currentColor"/>
+          <ellipse cx="12" cy="17" rx="7" ry="3" fill="currentColor" opacity="0.9"/>
+          <path d="M5 16C4 13 6 11 8 12L9 15" fill="currentColor"/>
+          <path d="M6 19L5 23M9 20L9 23M15 20L15 23M18 19L19 23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <rect x="9.5" y="11" width="5" height="5" rx="1" fill="currentColor" opacity="0.85"/>
+          <circle cx="12" cy="8.5" r="2.5" fill="currentColor"/>
+          <path d="M14 10L22 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          <path d="M21 6L23 7L22 9Z" fill="currentColor"/>
         </symbol>
 
         {/* ── Skaven ──────────────────────────────────────────────────────── */}
 
-        {/* Clawlord on Gnaw-beast — rat lord atop fanged beast, halberd raised */}
+        {/* Clawlord — knight riding a rat */}
         <symbol id="unit-icon-clawlord" viewBox="0 0 24 24">
-          <path d="M5 14 C5 12 7 10 10 10 C13 10 15 12 15 14 C15 17 12 19 10 19 C7 19 5 17 5 14Z" fill="currentColor" opacity="0.85"/>
-          <path d="M3 18 L5 15 M7 19 L7 22 M13 19 L13 22 M15 17 L17 20" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-          <path d="M15 14 L18 14 L20 12 L19 9 L17 10 L16 13Z" fill="currentColor" opacity="0.7"/>
-          <circle cx="10" cy="7" r="2.5" fill="currentColor"/>
-          <path d="M8 6 L6 4 M10 5 L10 3 M12 6 L14 4" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-          <path d="M12 9 L17 4 L18 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-          <path d="M16 3 L19 2 L18 5Z" fill="currentColor"/>
+          <ellipse cx="12" cy="17" rx="7" ry="2.8" fill="currentColor" opacity="0.9"/>
+          <ellipse cx="5" cy="16" rx="3" ry="2.5" fill="currentColor"/>
+          <path d="M2.5 17L2 18.5L4.5 18Z" fill="currentColor"/>
+          <path d="M4.5 13.5L4 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <path d="M6.5 13L7.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <path d="M3 16L1.5 15M3 17L1.5 18" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round"/>
+          <path d="M19 15.5C21 13.5 22 11.5 21 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+          <path d="M7.5 19.5L6.5 23M11 20L11 23M14.5 20L14.5 23M17.5 19.5L18.5 23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <rect x="8.5" y="11" width="5" height="5" rx="1" fill="currentColor" opacity="0.85"/>
+          <circle cx="11" cy="8.5" r="2.5" fill="currentColor"/>
+          <path d="M13 10L19 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M18 4L21 5L20 8Z" fill="currentColor"/>
         </symbol>
 
-        {/* Grey Seer — robed rat with tall pointed hat and warpstone staff */}
+        {/* Grey Seer — wizard, pointed hat, staff with crystal */}
         <symbol id="unit-icon-grey-seer" viewBox="0 0 24 24">
-          <path d="M12 3 L10 8 L14 8 Z" fill="currentColor"/>
-          <path d="M10 8 L9 12 L15 12 L14 8Z" fill="currentColor" opacity="0.8"/>
-          <circle cx="12" cy="5" r="1" fill="currentColor" opacity="0.5"/>
-          <path d="M9 12 L8 20 L16 20 L15 12Z" fill="currentColor" opacity="0.75"/>
-          <path d="M6 13 L8 12 M18 13 L16 12" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.6"/>
-          <path d="M5 11 L4 20 L6 20 L6 11Z" fill="currentColor" opacity="0.7"/>
-          <path d="M4 10 L6 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          <circle cx="4" cy="9" r="1.5" fill="currentColor" opacity="0.9"/>
-          <path d="M3 8 L5 8 M4 7 L4 9" stroke="white" strokeWidth="0.6" opacity="0.7"/>
+          <path d="M12 2L9 10H15Z" fill="currentColor"/>
+          <path d="M8 10H16" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+          <circle cx="12" cy="13" r="2.5" fill="currentColor" opacity="0.9"/>
+          <path d="M9.5 15L8 22H16L14.5 15Z" fill="currentColor" opacity="0.85"/>
+          <path d="M18 9V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M16 9L20 9L18 6Z" fill="currentColor"/>
         </symbol>
 
-        {/* Warlock Engineer — rat with mechanical backpack and warplock musket */}
+        {/* Warlock Engineer — cog/gear wheel */}
         <symbol id="unit-icon-warlock-engineer" viewBox="0 0 24 24">
-          <circle cx="10" cy="7" r="2.5" fill="currentColor"/>
-          <path d="M8 9 L7 20 L13 20 L12 9Z" fill="currentColor" opacity="0.8"/>
-          <path d="M12 10 L18 10 L19 12 L17 13 L15 12 L13 11Z" fill="currentColor" opacity="0.9"/>
-          <path d="M19 10 L22 9 L22 11 L19 12Z" fill="currentColor"/>
-          <path d="M13 10 L14 7 L16 6 L17 8 L16 10" fill="none" stroke="currentColor" strokeWidth="1.2"/>
-          <circle cx="15" cy="7" r="1.5" fill="none" stroke="currentColor" strokeWidth="1"/>
-          <path d="M15 6 L15 3 M14 7 L12 5 M16 7 L18 5" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" opacity="0.6"/>
-          <path d="M7 13 L5 13 L5 17 L7 17" stroke="currentColor" strokeWidth="1.2" fill="none"/>
+          <circle cx="12" cy="12" r="5" fill="currentColor"/>
+          <circle cx="12" cy="12" r="2" fill="none" stroke="white" strokeWidth="0.8" opacity="0.5"/>
+          <rect x="10.5" y="3.5" width="3" height="3.5" rx="0.5" fill="currentColor"/>
+          <rect x="10.5" y="17" width="3" height="3.5" rx="0.5" fill="currentColor"/>
+          <rect x="3.5" y="10.5" width="3.5" height="3" rx="0.5" fill="currentColor"/>
+          <rect x="17" y="10.5" width="3.5" height="3" rx="0.5" fill="currentColor"/>
+          <path d="M7.5 5.5L6 7L7.5 8.5L9 7Z" fill="currentColor"/>
+          <path d="M16.5 5.5L18 7L16.5 8.5L15 7Z" fill="currentColor"/>
+          <path d="M7.5 18.5L6 17L7.5 15.5L9 17Z" fill="currentColor"/>
+          <path d="M16.5 18.5L18 17L16.5 15.5L15 17Z" fill="currentColor"/>
         </symbol>
 
-        {/* Clanrats (unit 1) — scrawny rat with rusty blade, hunched posture */}
+        {/* Clanrats (unit 1) — kite shield with center boss */}
         <symbol id="unit-icon-clanrats-1" viewBox="0 0 24 24">
-          <circle cx="9" cy="7" r="2.5" fill="currentColor"/>
-          <path d="M8 4 L7 2 M10 5 L12 3" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-          <path d="M7 9 L6 17 L9 17 L10 13 L11 17 L14 17 L12 9Z" fill="currentColor" opacity="0.8"/>
-          <path d="M14 9 L18 5 L19 6 L16 10 L14 11Z" fill="currentColor" opacity="0.9"/>
-          <path d="M18 5 L20 3 L21 4 L19 6Z" fill="currentColor"/>
-          <path d="M6 17 L4 19 L3 22" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.7"/>
+          <path d="M12 3L5 7V13C5 17 8 20 12 22C16 20 19 17 19 13V7L12 3Z" fill="currentColor"/>
+          <path d="M12 3V22" stroke="white" strokeWidth="0.8" opacity="0.25"/>
+          <path d="M5 12H19" stroke="white" strokeWidth="0.8" opacity="0.25"/>
+          <circle cx="12" cy="12" r="2.5" fill="none" stroke="white" strokeWidth="1" opacity="0.4"/>
         </symbol>
 
-        {/* Clanrats (unit 2) — rat with blade + round shield (distinct) */}
+        {/* Clanrats (unit 2) — kite shield with clan mark */}
         <symbol id="unit-icon-clanrats-2" viewBox="0 0 24 24">
-          <circle cx="10" cy="7" r="2.5" fill="currentColor"/>
-          <path d="M9 4 L8 2 M11 5 L13 3" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-          <path d="M8 9 L7 17 L10 17 L11 13 L12 17 L15 17 L13 9Z" fill="currentColor" opacity="0.8"/>
-          <path d="M6 10 L4 10 L4 15 L6 15 L7 14 L7 11Z" fill="none" stroke="currentColor" strokeWidth="1.4"/>
-          <path d="M5 12 L7 12" stroke="currentColor" strokeWidth="0.8" opacity="0.5"/>
-          <path d="M13 9 L17 7 L18 8 L15 11 L13 11Z" fill="currentColor" opacity="0.85"/>
-          <path d="M17 7 L19 5 L20 6 L18 8Z" fill="currentColor"/>
+          <path d="M12 3L5 7V13C5 17 8 20 12 22C16 20 19 17 19 13V7L12 3Z" fill="currentColor" opacity="0.9"/>
+          <path d="M12 3V22" stroke="white" strokeWidth="0.8" opacity="0.25"/>
+          <path d="M8.5 9L15.5 15M15.5 9L8.5 15" stroke="white" strokeWidth="1" opacity="0.35"/>
         </symbol>
 
-        {/* Rat Ogors — hulking mutant with gun-arm and blade-arm */}
+        {/* Rat Ogors — massive ogor bulk, huge arms, small head */}
         <symbol id="unit-icon-rat-ogors" viewBox="0 0 24 24">
-          <circle cx="12" cy="6" r="3.5" fill="currentColor"/>
-          <path d="M10 5 L8 3 M12 4 L12 2 M14 5 L16 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-          <path d="M8 9 L6 20 L10 20 L12 14 L14 20 L18 20 L16 9Z" fill="currentColor" opacity="0.9"/>
-          <path d="M8 10 L4 8 L3 10 L4 14 L7 13Z" fill="currentColor" opacity="0.85"/>
-          <path d="M3 10 L1 9 L1 11 L3 12Z" fill="currentColor"/>
-          <path d="M16 10 L20 9 L21 11 L20 13 L17 12Z" fill="currentColor" opacity="0.9"/>
-          <path d="M20 9 L23 9 L23 12 L21 11Z" fill="currentColor"/>
+          <rect x="6" y="10" width="12" height="10" rx="2" fill="currentColor"/>
+          <path d="M6 11L2 13L2 18L5.5 18L6 16Z" fill="currentColor"/>
+          <path d="M18 11L22 13L22 18L18.5 18L18 16Z" fill="currentColor"/>
+          <circle cx="12" cy="7" r="4" fill="currentColor"/>
+          <path d="M9 4L8 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M15 4L16 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <circle cx="2.5" cy="18" r="1.5" fill="currentColor"/>
+          <circle cx="21.5" cy="18" r="1.5" fill="currentColor"/>
+          <path d="M9 20L8 23M15 20L16 23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         </symbol>
 
         {/* ── Stormcast ───────────────────────────────────────────────────── */}
 
-        {/* Yndrasta — angel-warrior descending with spear, large wings spread */}
+        {/* Yndrasta — winged knight, wings spread, spear raised */}
         <symbol id="unit-icon-yndrasta" viewBox="0 0 24 24">
-          <path d="M12 8 L3 13 L5 15 L12 11 L19 15 L21 13 Z" fill="currentColor" opacity="0.85"/>
-          <path d="M12 11 L5 15 L4 18 L8 16 L12 14 L16 16 L20 18 L19 15Z" fill="currentColor" opacity="0.6"/>
-          <circle cx="12" cy="6" r="2.5" fill="currentColor"/>
-          <path d="M12 8 L12 20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          <path d="M11 20 L13 20 L12 24" fill="currentColor"/>
-          <path d="M12 3 L14 6 L12 8 L10 6Z" fill="currentColor" opacity="0.8"/>
+          <path d="M12 10L3 14L5 16L12 12L19 16L21 14Z" fill="currentColor" opacity="0.85"/>
+          <path d="M12 12L4 16L3 20L8 18L12 15L16 18L21 20L20 16Z" fill="currentColor" opacity="0.55"/>
+          <rect x="10" y="11" width="4" height="7" rx="1" fill="currentColor"/>
+          <circle cx="12" cy="8.5" r="2.5" fill="currentColor"/>
+          <path d="M10 7.5L12 5L14 7.5" fill="currentColor"/>
+          <path d="M12 5L12 20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          <path d="M10.5 4L12 2L13.5 4Z" fill="currentColor"/>
         </symbol>
 
-        {/* Knight-Vexillor — armored knight holding tall battle standard */}
-        <symbol id="unit-icon-knight-vexillor" viewBox="0 0 24 24">
-          <rect x="11" y="3" width="1.5" height="18" rx="0.75" fill="currentColor"/>
-          <path d="M12.5 3 L12.5 10 L19 8 L12.5 6Z" fill="currentColor" opacity="0.85"/>
-          <circle cx="9" cy="14" r="3" fill="currentColor" opacity="0.9"/>
-          <path d="M6 17 L5 22 L9 21 L9 17Z" fill="currentColor" opacity="0.8"/>
-          <path d="M12 17 L9 17 L8 21 L12 22Z" fill="currentColor" opacity="0.7"/>
-          <path d="M7 13 L6 11 L8 10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-        </symbol>
-
-        {/* Annihilators — heavily armored warrior with massive hammer */}
-        <symbol id="unit-icon-annihilators" viewBox="0 0 24 24">
-          <rect x="9" y="3" width="6" height="6" rx="1" fill="currentColor"/>
-          <rect x="8" y="5" width="8" height="4" rx="1" fill="currentColor" opacity="0.7"/>
-          <path d="M12 9 L12 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          <ellipse cx="12" cy="12" rx="5" ry="4" fill="currentColor" opacity="0.85"/>
-          <path d="M7 17 L8 22 L16 22 L17 17Z" fill="currentColor" opacity="0.75"/>
-          <path d="M8 13 L6 12 L5 14 L7 15Z" fill="currentColor" opacity="0.6"/>
-          <path d="M16 13 L18 12 L19 14 L17 15Z" fill="currentColor" opacity="0.6"/>
-        </symbol>
-
-        {/* Vanquishers (unit 1) — warrior with two-handed greatsword raised */}
+        {/* Vanquishers (unit 1) — knight holding two-hand sword raised diagonally */}
         <symbol id="unit-icon-vanquishers-1" viewBox="0 0 24 24">
-          <circle cx="12" cy="7" r="2.5" fill="currentColor"/>
-          <path d="M10 9 L9 20 L15 20 L14 9Z" fill="currentColor" opacity="0.85"/>
-          <path d="M9 12 L7 11 L7 15 L9 14Z" fill="currentColor" opacity="0.7"/>
-          <path d="M15 12 L17 11 L17 15 L15 14Z" fill="currentColor" opacity="0.7"/>
-          <path d="M14 8 L20 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M19 1 L22 2 L21 5 L18 3Z" fill="currentColor"/>
-          <path d="M16 10 L18 8 L17 7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+          <rect x="9" y="13" width="6" height="7" rx="1" fill="currentColor" opacity="0.85"/>
+          <circle cx="12" cy="10.5" r="2.5" fill="currentColor"/>
+          <path d="M7 19L17 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+          <path d="M9.5 15.5L13 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <circle cx="7.5" cy="18.5" r="1.5" fill="currentColor"/>
+          <path d="M10 13L8.5 10.5M14 13L15.5 10.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
         </symbol>
 
-        {/* Vanquishers (unit 2) — greatsword + kite shield combo */}
+        {/* Vanquishers (unit 2) — greatsword held upright, slight angle variation */}
         <symbol id="unit-icon-vanquishers-2" viewBox="0 0 24 24">
-          <circle cx="12" cy="7" r="2.5" fill="currentColor"/>
-          <path d="M10 9 L9 20 L15 20 L14 9Z" fill="currentColor" opacity="0.85"/>
-          <path d="M6 10 L4 10 L4 16 L6 16 L8 14 L8 12Z" fill="none" stroke="currentColor" strokeWidth="1.4"/>
-          <path d="M5 13 L8 13" stroke="currentColor" strokeWidth="0.8" opacity="0.5"/>
-          <path d="M14 8 L19 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M18 2 L21 3 L20 6 L17 4Z" fill="currentColor"/>
+          <rect x="9" y="13" width="6" height="7" rx="1" fill="currentColor" opacity="0.85"/>
+          <circle cx="12" cy="10.5" r="2.5" fill="currentColor"/>
+          <path d="M10.5 4L10.5 8" stroke="white" strokeWidth="0.7" opacity="0.35"/>
+          <path d="M6 18L18 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+          <path d="M10.5 15L14 11.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <circle cx="6.5" cy="17.5" r="1.5" fill="currentColor"/>
+          <path d="M10 13L8 11M14 13L16 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
         </symbol>
 
-        {/* Stormstrike Chariot — gryph-charger bird pulling wheeled chariot */}
+        {/* Knight-Vexillor — knight holding tall banner pole with flag */}
+        <symbol id="unit-icon-knight-vexillor" viewBox="0 0 24 24">
+          <rect x="11.5" y="3" width="2" height="19" rx="1" fill="currentColor"/>
+          <path d="M13.5 3L13.5 12L21 9.5L13.5 7Z" fill="currentColor" opacity="0.85"/>
+          <rect x="7" y="14" width="6.5" height="7" rx="1" fill="currentColor" opacity="0.85"/>
+          <circle cx="10.5" cy="11.5" r="2.5" fill="currentColor"/>
+          <path d="M12.5 14L12.5 9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" opacity="0.6"/>
+        </symbol>
+
+        {/* Annihilators — knight with hammer in one hand, shield on the other */}
+        <symbol id="unit-icon-annihilators" viewBox="0 0 24 24">
+          <rect x="9" y="12" width="6" height="8" rx="1.5" fill="currentColor" opacity="0.9"/>
+          <circle cx="12" cy="9.5" r="2.5" fill="currentColor"/>
+          <path d="M5 10L5 17L8 20L11 17L11 10L5 10Z" fill="currentColor" opacity="0.85"/>
+          <path d="M5 14L11 14" stroke="white" strokeWidth="0.7" opacity="0.3"/>
+          <path d="M15 12L15 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+          <rect x="13.5" y="4" width="5" height="4" rx="1" fill="currentColor"/>
+          <path d="M10 20L9 23M14 20L15 23" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </symbol>
+
+        {/* Stormstrike Chariot — wheeled chariot with creature pulling */}
         <symbol id="unit-icon-stormstrike-chariot" viewBox="0 0 24 24">
-          <path d="M3 13 C3 11 6 9 10 9 C13 9 15 11 15 13 C15 15 13 16 10 16 C7 16 3 15 3 13Z" fill="currentColor" opacity="0.85"/>
-          <path d="M4 14 L2 17 M8 16 L8 19 M12 15 L12 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          <path d="M8 9 L7 6 L9 4 L12 6 L14 9" fill="none" stroke="currentColor" strokeWidth="1.3"/>
-          <path d="M9 4 L8 2 L11 2 L12 4" fill="currentColor" opacity="0.7"/>
-          <path d="M15 12 L18 12 L20 14 L20 18 L18 18 L16 16 L15 16Z" fill="currentColor" opacity="0.8"/>
-          <circle cx="17" cy="19" r="2" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-          <circle cx="20" cy="19" r="2" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+          <rect x="13" y="9" width="9" height="6" rx="1" fill="currentColor" opacity="0.85"/>
+          <circle cx="14.5" cy="18" r="3" fill="none" stroke="currentColor" strokeWidth="2"/>
+          <path d="M14.5 15L14.5 21M11.5 18L17.5 18" stroke="currentColor" strokeWidth="1" opacity="0.5"/>
+          <circle cx="20.5" cy="18" r="3" fill="none" stroke="currentColor" strokeWidth="2"/>
+          <path d="M20.5 15L20.5 21M17.5 18L23 18" stroke="currentColor" strokeWidth="1" opacity="0.5"/>
+          <ellipse cx="7" cy="13" rx="5" ry="2.5" fill="currentColor" opacity="0.85"/>
+          <circle cx="3" cy="12" r="1.8" fill="currentColor"/>
+          <path d="M4 15L3 20M7 15.5L7 20M10 15L10.5 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <path d="M13 13H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
         </symbol>
 
         {/* Lord-Vigilant — mounted commander on gryph-stalker with greataxe */}

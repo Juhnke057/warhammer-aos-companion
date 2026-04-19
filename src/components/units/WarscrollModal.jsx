@@ -3,6 +3,72 @@ import { useGameStore, getArmyData, getAllUnits } from '../../store/gameStore'
 import { COMMON_STATUS_EFFECTS } from './UnitCard'
 import Modal from '../ui/Modal'
 
+// ── Dice roll helper ──────────────────────────────────────────────────────────
+function parseDice(text) {
+  const seen = new Set()
+  const result = []
+  for (const m of text.matchAll(/\b(\d+)?[Dd](\d+)\b/g)) {
+    const expr = m[0].toUpperCase()
+    if (!seen.has(expr)) { seen.add(expr); result.push(expr) }
+  }
+  return result
+}
+
+function rollExpr(expr) {
+  const m = expr.match(/^(\d+)?D(\d+)$/i)
+  if (!m) return null
+  const count = parseInt(m[1] || '1')
+  const sides = parseInt(m[2])
+  const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1)
+  return rolls.reduce((a, b) => a + b, 0)
+}
+
+function DiceHelper({ effect }) {
+  const [results, setResults] = useState({})
+  const exprs = parseDice(effect)
+  if (exprs.length === 0) return null
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-2">
+      {exprs.map(expr => (
+        <button
+          key={expr}
+          onClick={() => setResults(r => ({ ...r, [expr]: rollExpr(expr) }))}
+          className="flex items-center gap-1.5 px-2.5 py-1 active:scale-95 transition-transform"
+          style={{ background: '#f59e0b18', border: '1px solid #f59e0b40', borderRadius: 20, fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, color: '#f59e0b' }}
+        >
+          🎲 Roll {expr}
+          {results[expr] != null && (
+            <span style={{ background: '#f59e0b', color: '#000', borderRadius: 10, padding: '0 6px', marginLeft: 2 }}>
+              {results[expr]}
+            </span>
+          )}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// ── Ability context footnotes ─────────────────────────────────────────────────
+function AbilityFootnotes({ timing, effect }) {
+  const notes = []
+  if (timing?.startsWith('Reaction'))
+    notes.push({ color: '#818cf8', text: 'Reaction: declare this ability immediately when your opponent announces the listed trigger — before they resolve it.' })
+  if (/Heal\s*\(/.test(effect))
+    notes.push({ color: '#10b981', text: 'Heal: remove that many damage points from the unit card. Tap the green Heal button on the unit card to reduce damage.' })
+  if (/wholly within/i.test(effect))
+    notes.push({ color: '#94a3b8', text: '"Wholly within X"": every model in the unit must be inside the distance. "Within X"" only requires any one model to be close enough.' })
+  if (notes.length === 0) return null
+  return (
+    <div className="space-y-1 mt-2">
+      {notes.map((n, i) => (
+        <div key={i} style={{ fontSize: 10, color: n.color, background: n.color + '10', border: `1px solid ${n.color}25`, borderRadius: 6, padding: '4px 8px', lineHeight: 1.45 }}>
+          {n.text}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // Abilities that apply a trackable status effect to a target unit.
 // Maps abilityId → the status effect id it applies.
 const ABILITY_APPLIES_STATUS = {
@@ -16,6 +82,64 @@ const ABILITY_APPLIES_STATUS = {
   'deliver-judgement':       'strike-last',   // target gets Strike-Last after first fight
   'force-of-a-falling-star': 'strike-last',   // enemy unit gets Strike-Last
   'banner-of-the-reforged':  null,            // heals + control — no ongoing status
+}
+
+function ArmyRulesSection({ title, accentColor, rules, playerIndex }) {
+  const { usedBattleTraits, toggleBattleTrait } = useGameStore()
+  return (
+    <div>
+      <div className="aos-rule" style={{ color: accentColor }} />
+      <div className="text-xs font-display font-bold uppercase tracking-widest mb-2" style={{ color: accentColor + '99' }}>
+        {title}
+      </div>
+      <div className="space-y-2">
+        {rules.map(rule => {
+          const isOnceBattle = rule.timing?.includes('Once Per Battle')
+          const isPassive    = rule.timing === 'Passive'
+          const traitKey     = `${playerIndex}-${rule.id}`
+          const isUsed       = isOnceBattle && !!usedBattleTraits[traitKey]
+          const text         = rule.effect || rule.description
+          return (
+            <div
+              key={rule.id}
+              className="rounded-lg overflow-hidden"
+              style={{ border: `1px solid ${isUsed ? 'rgba(255,255,255,0.08)' : accentColor + '25'}`, opacity: isUsed ? 0.55 : 1 }}
+            >
+              <div className="px-3 py-2 flex items-center justify-between gap-2" style={{ background: isUsed ? 'rgba(255,255,255,0.04)' : accentColor + '12' }}>
+                <div>
+                  <div className="font-display font-bold text-sm uppercase tracking-wide" style={{ color: isUsed ? '#555' : accentColor }}>
+                    {isUsed ? '✓ ' : ''}{rule.name}
+                  </div>
+                  <div className="text-xs mt-0.5" style={{ color: isUsed ? '#444' : accentColor + '70' }}>
+                    {rule.timing}
+                    {isOnceBattle && <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold" style={{ background: '#f59e0b20', color: '#f59e0b' }}>Once Per Battle</span>}
+                  </div>
+                </div>
+                {!isPassive && (
+                  <button
+                    onClick={() => toggleBattleTrait(playerIndex, rule.id)}
+                    className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold active:scale-95 transition-transform"
+                    style={{
+                      background: isUsed ? 'rgba(255,255,255,0.06)' : accentColor + '25',
+                      color: isUsed ? '#555' : accentColor,
+                      border: `1px solid ${isUsed ? 'rgba(255,255,255,0.08)' : accentColor + '40'}`,
+                    }}
+                  >
+                    {isUsed ? 'Mark Unused' : 'Mark Used'}
+                  </button>
+                )}
+              </div>
+              <div className="px-3 py-2.5">
+                <p className="text-sm text-gray-300 leading-relaxed">{text}</p>
+                <DiceHelper effect={text ?? ''} />
+                <AbilityFootnotes timing={rule.timing} effect={text ?? ''} />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
 function StatGem({ label, value, accentColor }) {
@@ -172,6 +296,9 @@ export default function WarscrollModal({ unit, playerIndex, army, theme, onClose
             <StatGem label="Health"  value={unit.health}  accentColor={accentColor} />
             <StatGem label="Save"    value={unit.save}    accentColor={accentColor} />
             <StatGem label="Control" value={unit.control} accentColor={accentColor} />
+            {unit.wardValue && (
+              <StatGem label="Ward" value={`${unit.wardValue}+`} accentColor="#4f86c6" />
+            )}
           </div>
 
           {/* Keywords */}
@@ -284,10 +411,27 @@ export default function WarscrollModal({ unit, playerIndex, army, theme, onClose
                     {/* Ability effect text */}
                     <div className="px-3 py-2.5">
                       <p className="text-sm text-gray-300 leading-relaxed">{ability.effect}</p>
+                      <DiceHelper effect={ability.effect ?? ''} />
+                      <AbilityFootnotes timing={ability.timing} effect={ability.effect ?? ''} />
                     </div>
                   </div>
                 )
               })}
+            </>
+          )}
+
+          {/* Army-level rules — shown on the general's warscroll */}
+          {unit.id === army?.general?.id && (
+            <>
+              {army.enhancements?.length > 0 && (
+                <ArmyRulesSection title="Enhancements" accentColor={accentColor} rules={army.enhancements} playerIndex={playerIndex} />
+              )}
+              {army.battleTraits?.length > 0 && (
+                <ArmyRulesSection title="Battle Traits" accentColor="#6366f1" rules={army.battleTraits} playerIndex={playerIndex} />
+              )}
+              {army.regimentAbilities?.length > 0 && (
+                <ArmyRulesSection title="Regiment Abilities" accentColor="#10b981" rules={army.regimentAbilities} playerIndex={playerIndex} />
+              )}
             </>
           )}
 

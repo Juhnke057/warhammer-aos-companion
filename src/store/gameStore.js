@@ -110,6 +110,7 @@ const initialState = {
 
   // Twist deck — manual draw flow
   activeTwist: null,
+  activeTwistOptionId: null, // which pick-one option was selected for this twist
   usedTwistIds: [],
   twistDrawPending: true, // true = player needs to draw & select a twist card
 
@@ -128,6 +129,8 @@ const initialState = {
   nobleDeedsPoints: {},
   // Once-per-battle trait tracking: { 'playerIndex-traitId': boolean }
   usedBattleTraits: {},
+  // Once-per-battle tactic command tracking: { 'playerIndex-tacticId': boolean }
+  usedTacticCommands: {},
   // Ability used this turn: { 'playerIndex-unitId-abilityId': boolean } — resets each turn
   usedAbilitiesThisTurn: {},
   // Ability used this battle: { 'playerIndex-unitId-abilityId': boolean } — persists all game
@@ -247,6 +250,7 @@ export const useGameStore = create(
           vp: [0, 0],
           nobleDeedsPoints: {},
           usedBattleTraits: {},
+          usedTacticCommands: {},
           usedAbilitiesThisTurn: {},
           usedAbilitiesThisBattle: {},
           objectiveControl: { dracothion: null, ignax: null, behemat: null, vulcatrix: null, nagendra: null },
@@ -294,6 +298,7 @@ export const useGameStore = create(
               currentPhaseIndex: 0,
               playerTurnsDoneThisRound: 0,
               activeTwist: null,
+              activeTwistOptionId: null,
               twistDrawPending: true,
               tacticDeck: deck,
               playerHands: newHands,
@@ -496,12 +501,16 @@ export const useGameStore = create(
       // ── Twist Card Manual Draw ───────────────────────────────────────────────
 
       selectTwist(card) {
-        // card is the full card object from cards.js, passed from TwistDrawModal
         set(s => ({
           activeTwist: card,
+          activeTwistOptionId: null,
           usedTwistIds: [...s.usedTwistIds, card.id],
           twistDrawPending: false,
         }))
+      },
+
+      setTwistOptionId(optionId) {
+        set({ activeTwistOptionId: optionId })
       },
 
       // ── Per-Ability Usage Tracking ───────────────────────────────────────────
@@ -516,6 +525,15 @@ export const useGameStore = create(
       toggleAbilityThisBattle(playerIndex, unitId, abilityId) {
         const key = `${playerIndex}-${unitId}-${abilityId}`
         set(s => ({ usedAbilitiesThisBattle: { ...s.usedAbilitiesThisBattle, [key]: !s.usedAbilitiesThisBattle[key] } }))
+      },
+
+      // ── Tactic Command Tracking ──────────────────────────────────────────────
+
+      toggleTacticCommandUsed(playerIndex, tacticId) {
+        const key = `${playerIndex}-${tacticId}`
+        set(s => ({
+          usedTacticCommands: { ...s.usedTacticCommands, [key]: !s.usedTacticCommands[key] },
+        }))
       },
 
       // ── Once-Per-Battle Traits ───────────────────────────────────────────────
@@ -607,6 +625,7 @@ export const useGameStore = create(
         playerTurnsDoneThisRound: state.playerTurnsDoneThisRound,
         vp: state.vp,
         activeTwist: state.activeTwist,
+        activeTwistOptionId: state.activeTwistOptionId,
         usedTwistIds: state.usedTwistIds,
         twistDrawPending: state.twistDrawPending,
         tacticDeck: state.tacticDeck,
@@ -615,6 +634,7 @@ export const useGameStore = create(
         unitStates: state.unitStates,
         nobleDeedsPoints: state.nobleDeedsPoints,
         usedBattleTraits: state.usedBattleTraits,
+        usedTacticCommands: state.usedTacticCommands,
         usedAbilitiesThisTurn: state.usedAbilitiesThisTurn,
         usedAbilitiesThisBattle: state.usedAbilitiesThisBattle,
         objectiveControl: state.objectiveControl,

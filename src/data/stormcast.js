@@ -234,7 +234,7 @@ export const STORMCAST_ARMIES = {
       {
         id: 'lord-veritant',
         name: 'Lord-Veritant',
-        move: '6"',
+        move: '5"',
         health: 6,
         save: '3+',
         control: 2,

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useGameStore } from '../../store/gameStore'
+import { useGameStore, getArmyData } from '../../store/gameStore'
 import Modal from '../ui/Modal'
 import { UnitIcon, hasUnitIcon } from '../ui/UnitIcons'
 import UnitTypeIcon from '../ui/UnitTypeIcon'
@@ -59,7 +59,7 @@ function HpBoxes({ totalHealth, damagePoints, factionColor }) {
   const boxes   = Math.min(totalHealth, 20)
   const damaged = Math.min(damagePoints, boxes)
   return (
-    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', maxWidth: 200, marginTop: 6 }}>
+    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', maxWidth: 200, marginTop: 6, justifyContent: 'center' }}>
       {Array.from({ length: boxes }).map((_, i) => (
         <div key={i} style={{
           width: 16, height: 16, borderRadius: 4,
@@ -76,8 +76,12 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
   const {
     getUnitState, addDamage, removeDamage, setUnitDestroyed, setUnitReinforced,
     setUnitInReserve, addStatusEffect, removeStatusEffect, toggleUnitToken,
-    battleRound,
+    battleRound, players,
   } = useGameStore()
+
+  const playerArmy     = getArmyData(players[playerIndex]?.faction, players[playerIndex]?.armyVariant)
+  const chosenEnhancement = playerArmy?.enhancements?.[players[playerIndex]?.enhancementIndex]
+  const hasLeadTheHorde = chosenEnhancement?.id === 'lead-the-seething-horde'
   const [showStatusMenu, setShowStatusMenu] = useState(false)
 
   const state = getUnitState(playerIndex, unit.id)
@@ -141,15 +145,15 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
           <div className="flex items-center gap-2.5 min-w-0">
             {/* Unit icon */}
             <div style={{
-              width: 56, height: 56, borderRadius: 11, flexShrink: 0,
+              width: 80, height: 80, borderRadius: 14, flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: `rgba(${theme.edgeRgb},0.10)`,
               border: `1px solid rgba(${theme.edgeRgb},0.2)`,
               color: accentColor,
             }}>
               {hasUnitIcon(unit.id)
-                ? <UnitIcon unitId={unit.id} size={38} color={accentColor} />
-                : <UnitTypeIcon keywords={unit.keywords} color={accentColor} size={32} />
+                ? <UnitIcon unitId={unit.id} size={56} color={accentColor} />
+                : <UnitTypeIcon keywords={unit.keywords} color={accentColor} size={46} />
               }
             </div>
 
@@ -190,13 +194,13 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
 
               {/* Stat row */}
               <div className="flex items-center gap-3 mt-1.5 flex-wrap" style={{ color: theme.subInkColor }}>
-                <StatPill icon={<MoveIcon size={22} />} label={`${unit.move}"`} />
-                <StatPill icon={<HealthIcon size={22} />} label={unit.health} />
-                <StatPill icon={<ShieldIcon size={22} />} label={`${unit.save}+`} />
-                <StatPill icon={<ControlIcon size={22} />} label={totalControl} />
+                <StatPill icon={<MoveIcon size={18} />} label={unit.move} />
+                <StatPill icon={<HealthIcon size={18} />} label={unit.health} />
+                <StatPill icon={<ShieldIcon size={18} />} label={unit.save} />
+                <StatPill icon={<ControlIcon size={18} />} label={totalControl} />
                 {keywordWard && (
                   <StatPill
-                    icon={<WardIcon size={22} color="#4f86c6" />}
+                    icon={<WardIcon size={18} color="#4f86c6" />}
                     label={`${unit.wardValue}+`}
                     color="#4f86c6"
                   />
@@ -258,7 +262,7 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
         {!destroyed && !inReserve && (
           <div className="px-3 pb-3">
             {/* HP boxes */}
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex flex-col items-center gap-1 mb-2">
               <HpBoxes
                 totalHealth={totalHealth}
                 damagePoints={damagePoints}
@@ -267,8 +271,7 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
               <span
                 style={{
                   fontFamily: 'Cinzel, serif', fontSize: 11, fontWeight: 700,
-                  color: theme.subInkColor, flexShrink: 0, marginLeft: 'auto',
-                  minWidth: 64, textAlign: 'right',
+                  color: theme.subInkColor, flexShrink: 0, textAlign: 'center',
                 }}
               >
                 {isSwarm
@@ -282,15 +285,18 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => removeDamage(playerIndex, unit.id, 1)}
-                className="h-10 w-10 font-bold text-xl flex items-center justify-center active:scale-90 transition-transform flex-shrink-0"
+                className="h-10 flex items-center justify-center gap-1 px-2 active:scale-90 transition-transform flex-shrink-0"
                 style={{
                   background: 'rgba(16,185,129,0.10)',
                   color: '#10b981',
                   border: '1px solid rgba(16,185,129,0.28)',
                   borderRadius: 8,
-                  fontFamily: 'Cinzel, serif',
+                  fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700,
                 }}
-              >−</button>
+              >
+                <HealthIcon size={13} color="#10b981" />
+                Heal
+              </button>
 
               <div className="flex-1 text-center">
                 <div style={{
@@ -306,15 +312,18 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
 
               <button
                 onClick={() => addDamage(playerIndex, unit.id, 1)}
-                className="h-10 w-10 font-bold text-xl flex items-center justify-center active:scale-90 transition-transform flex-shrink-0"
+                className="h-10 flex items-center justify-center gap-1 px-2 active:scale-90 transition-transform flex-shrink-0"
                 style={{
-                  background: `rgba(${theme.edgeRgb},0.10)`,
-                  color: theme.archHeaderColor,
-                  border: `1px solid rgba(${theme.edgeRgb},0.28)`,
+                  background: 'rgba(176,24,24,0.10)',
+                  color: '#cc3030',
+                  border: '1px solid rgba(176,24,24,0.28)',
                   borderRadius: 8,
-                  fontFamily: 'Cinzel, serif',
+                  fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700,
                 }}
-              >+</button>
+              >
+                <SkullIcon size={13} color="#cc3030" />
+                Wound
+              </button>
 
               <button
                 onClick={() => setShowStatusMenu(true)}
@@ -343,6 +352,27 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
                 <SkullIcon size={16} color="#aa2222" />
               </button>
             </div>
+
+            {/* To Reserve / To Tunnels */}
+            {!unit.startInReserve && (
+              <button
+                onClick={() => setUnitInReserve(playerIndex, unit.id, true)}
+                className="w-full mt-1.5 flex items-center justify-center gap-1.5 py-1.5 active:scale-95 transition-transform"
+                style={{
+                  fontFamily: 'Cinzel, serif', fontSize: 9, fontWeight: 700,
+                  textTransform: 'uppercase', letterSpacing: '0.1em',
+                  background: 'rgba(99,102,241,0.07)',
+                  color: '#6366f1',
+                  border: '1px solid rgba(99,102,241,0.20)',
+                  borderRadius: 7,
+                }}
+              >
+                <ReserveIcon size={10} color="#6366f1" />
+                {players[playerIndex]?.faction === 'skaven' && players[playerIndex]?.armyVariant === 'gnawfeast'
+                  ? 'To Tunnels (Lurking Vermintide)'
+                  : 'To Reserve'}
+              </button>
+            )}
 
             {/* Ward save reminder */}
             {keywordWard && (
@@ -408,14 +438,15 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
 
         {/* ── Destroyed footer ──────────────────────────────────────────────── */}
         {destroyed && (
-          <div className="px-3 pb-3 flex items-center gap-2">
-            <SkullIcon size={14} color="#aa2222" />
-            <div
-              className="flex-1"
-              style={{ fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.10em', color: '#aa2222' }}
-            >
-              Destroyed
-            </div>
+          <div className="px-3 pb-3">
+            <div className="flex items-center gap-2">
+              <SkullIcon size={14} color="#aa2222" />
+              <div
+                className="flex-1"
+                style={{ fontFamily: 'Cinzel, serif', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.10em', color: '#aa2222' }}
+              >
+                Destroyed
+              </div>
             {hasReinforcements && (
               <button
                 onClick={() => setUnitReinforced(playerIndex, unit.id)}
@@ -444,6 +475,18 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
             >
               Undo
             </button>
+            </div>
+            {hasReinforcements && hasLeadTheHorde && (
+              <div
+                className="flex items-center gap-1.5 mt-1.5 px-2 py-1"
+                style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 6 }}
+              >
+                <LightningIcon size={10} color="#10b981" />
+                <span style={{ fontFamily: 'Cinzel, serif', fontSize: 10, fontWeight: 700, color: '#10b981' }}>
+                  Lead the Seething Horde — deploy within 13" of your general
+                </span>
+              </div>
+            )}
           </div>
         )}
 
@@ -551,11 +594,17 @@ export default function UnitCard({ unit, playerIndex, theme, onClick }) {
 function StatPill({ icon, label, color }) {
   return (
     <span
-      className="flex items-center gap-1.5 tabular-nums"
-      style={{ color: color || 'inherit', fontSize: 28, fontWeight: 700 }}
+      className="flex items-center gap-1 tabular-nums"
+      style={{
+        color: color || 'inherit',
+        fontFamily: 'Cinzel, serif',
+        fontSize: 15,
+        fontWeight: 700,
+        lineHeight: 1,
+      }}
     >
-      {icon}
-      {label}
+      <span style={{ display: 'flex', alignItems: 'center' }}>{icon}</span>
+      <span style={{ display: 'inline-block', lineHeight: 1 }}>{label}</span>
     </span>
   )
 }
